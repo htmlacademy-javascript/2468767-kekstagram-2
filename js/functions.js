@@ -12,3 +12,15 @@ isStringWithinLimit();
 
 /*Функция для проверки, является ли строка палиндромом.
 Палиндром — это слово или фраза, которые одинаково читаются и слева направо и справа налево*/
+const isPalindrome = (string) => {
+ string = string.replaceAll(' ','');
+ string = string.toLowerCase();
+
+ let reversed = '';
+ for(let i = string.length - 1;i >=0; i--){
+  reversed +=string[i];
+ }
+ return string === reversed;
+};
+
+isPalindrome();
