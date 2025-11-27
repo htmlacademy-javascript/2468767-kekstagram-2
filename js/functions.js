@@ -5,9 +5,9 @@
 если строка меньше или равна указанной длине,
 и false, если строка длиннее.*/
 
-const isStringWithinLimit = (str = '', maxLength = 20) => {
+const isStringWithinLimit = (str = '', maxLength = 20) =>{
   return str.length <= maxLength;
-}
+};
 isStringWithinLimit();
 
 /*Функция для проверки, является ли строка палиндромом.
