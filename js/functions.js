@@ -5,7 +5,7 @@
 если строка меньше или равна указанной длине,
 и false, если строка длиннее.*/
 
-const isStringWithinLimit = (str='', maxLength=20) =>{
+const isStringWithinLimit = (str ='', maxLength = 20) => {
   return str.length <= maxLength;
 };
 isStringWithinLimit();
@@ -13,14 +13,14 @@ isStringWithinLimit();
 /*Функция для проверки, является ли строка палиндромом.
 Палиндром — это слово или фраза, которые одинаково читаются и слева направо и справа налево*/
 const isPalindrome = (string) => {
- string = string.replaceAll(' ','');
- string = string.toLowerCase();
+  string = string.replaceAll(' ','');
+  string = string.toLowerCase();
 
- let reversed = '';
- for(let i = string.length - 1;i >=0; i--){
-  reversed +=string[i];
- }
- return string === reversed;
+  let reversed = '';
+  for(let i = string.length - 1;i >= 0; i--){
+    reversed += string[i];
+  }
+  return string === reversed;
 };
 
 isPalindrome();
@@ -36,14 +36,14 @@ const filterDigitsFromString = (str) => {
   let digits = '';
 
   /*цикл — для перебора полученной строки*/
-  for(let i=0;i<stringInput.length; i++){
+  for(let i = 0;i < stringInput.length; i++){
     const char = stringInput[i];
-    if(char>='0' && char<=9){
-      digits+=char;
+    if(char >= '0' && char <= 9){
+      digits += char;
     }
   }
 
-  return digits ? parseInt(digits,10): NaN;
+  return digits ? parseInt(digits,10) : NaN;
 };
 
 filterDigitsFromString();
