@@ -24,3 +24,26 @@ const isPalindrome = (string) => {
 };
 
 isPalindrome();
+
+/*Функция принимает строку, извлекает содержащиеся в ней цифры от 0 до 9 и возвращает их в виде целого положительного числа.
+Если в строке нет ни одной цифры, функция должна вернуть NaN*/
+
+const filterDigitsFromString = (str) => {
+
+  const stringInput = String(str);
+
+  /* переменная для накопления цифр*/
+  let digits = '';
+
+  /*цикл — для перебора полученной строки*/
+  for(let i=0;i<stringInput.length; i++){
+    const char = stringInput[i];
+    if(char>='0' && char<=9){
+      digits+=char;
+    }
+  }
+
+  return digits ? parseInt(digits,10): NaN;
+};
+
+filterDigitsFromString();
