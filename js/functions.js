@@ -52,11 +52,11 @@ const filterDigitsFromString = (str) => {
   return digits ? parseInt(digits, 10) : NaN;
 };
 
-console.log(filterDigitsFromString('2023 год')); // 2023
-console.log(filterDigitsFromString('ECMAScript 2022')); // 2022
-console.log(filterDigitsFromString('1 кефир, 0.5 батона')); // 105
-console.log(filterDigitsFromString('агент 007')); // 7
-console.log(filterDigitsFromString('а я томат')); // NaN
-console.log(filterDigitsFromString(2023)); // 2023
-console.log(filterDigitsFromString(-1)); // 1
-console.log(filterDigitsFromString(1.5)); // 15
+console.log(filterDigitsFromString('2023 год'));  // eslint-disable-next-line no-console
+console.log(filterDigitsFromString('ECMAScript 2022'));  // eslint-disable-next-line no-console
+console.log(filterDigitsFromString('1 кефир, 0.5 батона'));  // eslint-disable-next-line no-console
+console.log(filterDigitsFromString('агент 007'));  // eslint-disable-next-line no-console
+console.log(filterDigitsFromString('а я томат'));  // eslint-disable-next-line no-console
+console.log(filterDigitsFromString(2023));  // eslint-disable-next-line no-console
+console.log(filterDigitsFromString(-1));  // eslint-disable-next-line no-console
+console.log(filterDigitsFromString(1.5)); // eslint-disable-next-line no-console
