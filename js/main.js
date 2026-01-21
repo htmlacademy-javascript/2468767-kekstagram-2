@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // вычисляем случайный ID
 const id = Array.from({ length: 25 }, (_, i) => i + 1);
 // вычисляем случайный url
@@ -91,3 +92,4 @@ const FOTO_LIST = FOTO.map(subArr => {
   return subArr[randomIndex];
 });
 console.log(FOTO_LIST);
+/* eslint-disable no-console */

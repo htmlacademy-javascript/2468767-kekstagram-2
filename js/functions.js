@@ -4,7 +4,7 @@
 и возвращает true,
 если строка меньше или равна указанной длине,
 и false, если строка длиннее.*/
-
+/* eslint-disable no-console */
 const isStringWithinLimit = (str, maxLength) => str.length <= maxLength;
 
 // Строка короче 20 символов
@@ -59,3 +59,4 @@ console.log(filterDigitsFromString('а я томат')); // eslint-disable-next-
 console.log(filterDigitsFromString(2023)); // eslint-disable-next-line no-console
 console.log(filterDigitsFromString(-1)); // eslint-disable-next-line no-console
 console.log(filterDigitsFromString(1.5)); // eslint-disable-next-line no-console
+/* eslint-disable no-console */
