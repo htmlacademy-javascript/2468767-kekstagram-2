@@ -2,10 +2,12 @@
 // вычисляем случайный ID
 const id = Array.from({ length: 25 }, (_, i) => i + 1);
 // вычисляем случайный url
+// eslint-disable-next-line no-template-curly-in-string
 const url = Array.from({ length: 25 }, (_, i) => ({ url: 'photos/${ i + 1 }.jpg' }));
 // Случайное описание
 const descriptions = [];
 for (let i = 1; i <= 25; i++) {
+  // eslint-disable-next-line no-template-curly-in-string
   descriptions.push({ description: 'Описание фотографии №${i}' });
 }
 const likes = [];
@@ -82,7 +84,7 @@ function generateComments() {
 }
 
 // Пример вызова
-const comments = generateComments();
+ comments = generateComments();
 //console.log(comments);
 
 const FOTO = [id, url, descriptions, likes, comments];
