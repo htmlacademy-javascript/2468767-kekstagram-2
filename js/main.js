@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 // вычисляем случайный ID
-const id = Array.from({ length: 25 }, ( _, i) => i + 1);
+const id = Array.from({ length: 25 },(_, i) => i + 1);
 // вычисляем случайный url
 // eslint-disable-next-line no-template-curly-in-string
 const url = Array.from({ length: 25 }, (_, i) => ({ url: 'photos/${ i + 1 }.jpg' }));
@@ -74,9 +74,10 @@ function generateComments() {
     // Формируем объект комментария: name в конце
     comments.push({
       id: id,
+      // eslint-disable-next-line no-template-curly-in-string
       avatar: 'img/avatar-${getRandomInt(1, 6)}.svg',
       message: getRandomMessage(),
-      name: getRandomName() // name в конце объекта
+      name: getRandomName()
     });
   }
 
@@ -84,13 +85,12 @@ function generateComments() {
 }
 
 // Пример вызова
- comments = generateComments();
+comments = generateComments();
 //console.log(comments);
 
 const FOTO = [id, url, descriptions, likes, comments];
 //Проходимся по каждому массиву и генерм случайный индекс
-const FOTO_LIST = FOTO.map(subArr => {
-  const randomIndex = Math.floor(Math.random() * subArr.length);
+const FOTO_LIST = FOTO.map(subArr => {const randomIndex = Math.floor(Math.random() * subArr.length);
   return subArr[randomIndex];
 });
 console.log(FOTO_LIST);
