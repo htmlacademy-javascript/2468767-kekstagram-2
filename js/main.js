@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 // вычисляем случайный ID
-const id = Array.from({ length: 25 }, ( , i) => i + 1);
+const id = Array.from({ length: 25 }, ( _, i) => i + 1);
 // вычисляем случайный url
 // eslint-disable-next-line no-template-curly-in-string
 const url = Array.from({ length: 25 }, (_, i) => ({ url: 'photos/${ i + 1 }.jpg' }));
