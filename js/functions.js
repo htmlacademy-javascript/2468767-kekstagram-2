@@ -18,8 +18,8 @@ console.log(isStringWithinLimit('проверяемая строка', 10)); // 
 Палиндром — это слово или фраза, которые одинаково читаются и слева направо и справа налево*/
 const isPalindrome = (string) => {
 
-const formattedString = string.toLowerCase().replaceAll(' ','');
-return formattedString === formattedString.split('').reverse().join('');
+  const formattedString = string.toLowerCase().replaceAll(' ', '');
+  return formattedString === formattedString.split('').reverse().join('');
 };
 
 // Строка является палиндромом
@@ -27,7 +27,7 @@ console.log(isPalindrome('топот')); // true
 // Несмотря на разный регистр, тоже палиндром
 console.log(isPalindrome('ДовОд')); // true
 // Это не палиндром
-console.log(isPalindrome('Кекс'));  // false
+console.log(isPalindrome('Кекс')); // false
 // Это палиндром
 console.log(isPalindrome('Лёша на полке клопа нашёл ')); // true
 
@@ -42,21 +42,21 @@ const filterDigitsFromString = (str) => {
   let digits = '';
 
   /*цикл — для перебора полученной строки*/
-  for(let i = 0;i < stringInput.length; i++){
+  for (let i = 0; i < stringInput.length; i++) {
     const char = stringInput[i];
-    if(char >= '0' && char <= 9){
+    if (char >= '0' && char <= 9) {
       digits += char;
     }
   }
 
-  return digits ? parseInt(digits,10) : NaN;
+  return digits ? parseInt(digits, 10) : NaN;
 };
 
-console.log(filterDigitsFromString('2023 год'));            // 2023
-console.log(filterDigitsFromString('ECMAScript 2022'));     // 2022
+console.log(filterDigitsFromString('2023 год')); // 2023
+console.log(filterDigitsFromString('ECMAScript 2022')); // 2022
 console.log(filterDigitsFromString('1 кефир, 0.5 батона')); // 105
-console.log(filterDigitsFromString('агент 007'));           // 7
-console.log(filterDigitsFromString('а я томат'));           // NaN
-console.log(filterDigitsFromString(2023));                 // 2023
-console.log(filterDigitsFromString(-1));                   // 1
-console.log(filterDigitsFromString(1.5));                  // 15
+console.log(filterDigitsFromString('агент 007')); // 7
+console.log(filterDigitsFromString('а я томат')); // NaN
+console.log(filterDigitsFromString(2023)); // 2023
+console.log(filterDigitsFromString(-1)); // 1
+console.log(filterDigitsFromString(1.5)); // 15

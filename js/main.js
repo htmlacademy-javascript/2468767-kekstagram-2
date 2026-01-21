@@ -1,7 +1,7 @@
 // вычисляем случайный ID
-const id = Array.from({length:25},(_,i)=>i+1);
+const id = Array.from({ length: 25 }, (_, i) => i + 1);
 // вычисляем случайный url
-const url = Array.from({ length: 25 }, (_, i) => ({ url:'photos/${ i + 1 }.jpg'}));
+const url = Array.from({ length: 25 }, (_, i) => ({ url: 'photos/${ i + 1 }.jpg' }));
 // Случайное описание
 const descriptions = [];
 for (let i = 1; i <= 25; i++) {
@@ -86,8 +86,8 @@ const comments = generateComments();
 
 const FOTO = [id, url, descriptions, likes, comments];
 //Проходимся по каждому массиву и генерм случайный индекс
-const FOTO_LIST = FOTO.map (subArr=>{
-  const randomIndex = Math.floor(Math.random()*subArr.length);
+const FOTO_LIST = FOTO.map(subArr => {
+  const randomIndex = Math.floor(Math.random() * subArr.length);
   return subArr[randomIndex];
 });
 console.log(FOTO_LIST);
