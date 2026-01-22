@@ -1,4 +1,4 @@
-import {generateComments} from './util.js';
+import './util.js';
 
 const FOTO = [id, url, descriptions, likes, comments];
 //Проходимся по каждому массиву и генерм случайный индекс

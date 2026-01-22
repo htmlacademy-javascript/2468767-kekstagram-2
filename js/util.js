@@ -87,5 +87,6 @@ function generateComments() {
 // Пример вызова
 comments = generateComments();
 //console.log(comments);
-export {generateComments};
+
+export {id, url, descriptions, likes, comments};
 
