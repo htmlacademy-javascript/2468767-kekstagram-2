@@ -6,6 +6,8 @@
 и false, если строка длиннее.*/
 const isStringWithinLimit = (str, maxLength) => str.length <= maxLength;
 
+isStringWithinLimit();
+
 /*Функция для проверки, является ли строка палиндромом.
 Палиндром — это слово или фраза, которые одинаково читаются и слева направо и справа налево*/
 const isPalindrome = (string) => {
@@ -13,6 +15,8 @@ const isPalindrome = (string) => {
   const formattedString = string.toLowerCase().replaceAll(' ', '');
   return formattedString === formattedString.split('').reverse().join('');
 };
+
+isPalindrome();
 
 /*Функция принимает строку, извлекает содержащиеся в ней цифры от 0 до 9 и возвращает их в виде целого положительного числа.
 Если в строке нет ни одной цифры, функция должна вернуть NaN*/
@@ -34,4 +38,6 @@ const filterDigitsFromString = (str) => {
 
   return digits ? parseInt(digits, 10) : NaN;
 };
+
+filterDigitsFromString();
 

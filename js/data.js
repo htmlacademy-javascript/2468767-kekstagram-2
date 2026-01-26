@@ -1,4 +1,4 @@
-import { getRandomInt,getRandomName } from './util.js';
+import { getRandomInt, getRandomName } from './util.js';
 // вычисляем случайный ID
 export const id = Array.from({ length: 25 }, (value, i) => i + 1);
 // вычисляем случайный url
@@ -57,12 +57,12 @@ function generateComments() {
     usedIds.add(id);
   }
   // Формируем объект комментария: name в конце
-const comments.push({
-  id: id,
-  avatar: 'img/avatar-${getRandomInt(1, 6)}.svg',
-  message: getRandomMessage(),
-  name: getRandomName()
-});
+  comments.push({
+    id: id,
+    avatar: 'img/avatar-${getRandomInt(1, 6)}.svg',
+    message: getRandomMessage(),
+    name: getRandomName()
+  });
 
   return comments;
 }

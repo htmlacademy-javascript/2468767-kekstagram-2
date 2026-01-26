@@ -9,6 +9,6 @@ const FOTO_LIST = FOTO.map((subArr) => {
   const randomIndex = Math.floor(Math.random() * subArr.length);
   return subArr[randomIndex];
 });
-consolr.log(FOTO_LIST);
+consol.log(FOTO_LIST);
 
 
