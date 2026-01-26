@@ -1,6 +1,5 @@
 import './functions.js';
 import { id, url, descriptions, likes, comments } from './data.js';
-import { getRandomInt, generateComments } from './util.js';
 import './thumbs.js';
 
 
@@ -10,5 +9,6 @@ const FOTO_LIST = FOTO.map((subArr) => {
   const randomIndex = Math.floor(Math.random() * subArr.length);
   return subArr[randomIndex];
 });
+consolr.log(FOTO_LIST);
 
 
