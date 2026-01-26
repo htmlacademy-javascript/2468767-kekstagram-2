@@ -1,8 +1,7 @@
-import {getRandomInt,generateComments} from'./util.js';
+import { getRandomInt,getRandomMessage,getRandomName } from './util.js';
 // вычисляем случайный ID
 export const id = Array.from({ length: 25 }, (value, i) => i + 1);
 // вычисляем случайный url
-// eslint-disable-next-line no-template-curly-in-string
 export const url = Array.from({ length: 25 }, (value, i) => ({ url: 'photos/${ i + 1 }.jpg' }));
 // Случайное описание
 export const descriptions = [];
@@ -21,7 +20,7 @@ export const messages = [
 ];
 
 // Массив случайных имён
-export const names = [
+export const name = [
   'Алексей',
   'Мария',
   'Дмитрий',
@@ -34,7 +33,32 @@ export const names = [
   'Татьяна'
 ];
 
+// Функция: генерация массива комментариев
+function generateComments() {
+  const commentsCount = getRandomInt(0, 30); // 0–30 комментариев
+  const comments = [];
+  const usedIds = new Set();
+
+  for (let i = 0; i < commentsCount; i++) {
+    let id;
+    // Уникальный id
+    do {
+      id = getRandomInt(1, 100000);
+    } while (usedIds.has(id));
+    usedIds.add(id);
+  }
+  // Формируем объект комментария: name в конце
+const comments.push({
+  id: id,
+  avatar: 'img/avatar-${getRandomInt(1, 6)}.svg',
+  message: getRandomMessage(),
+  name: getRandomName()
+});
+
+  return comments;
+}
+
+
 export const likes = getRandomInt(15, 200);
 
-export const comments = generateComments();
 
