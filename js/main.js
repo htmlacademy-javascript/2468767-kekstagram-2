@@ -11,5 +11,4 @@ const FOTO_LIST = FOTO.map((subArr) => {
   return subArr[randomIndex];
 });
 
-console.log(FOTO_LIST);
 
