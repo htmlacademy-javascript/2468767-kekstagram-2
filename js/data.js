@@ -2,7 +2,7 @@ import { getRandomInt, getRandomArrayName } from './util.js';
 // вычисляем случайный ID
 export const id = Array.from({ length: 25 }, (value, i) => i + 1);
 // вычисляем случайный url
-export const url = Array.from({ length: 25 }, (value, i) => ({ url: 'photos${ i + 1 }.jpg' }));
+export const url = Array.from({ length: 25 }, (value, i) => ({ url: 'photos ${ i + 1 }.jpg' }));
 // Случайное описание
 export const descriptions = [];
 for (let i = 1; i <= 25; i++) {
@@ -11,6 +11,20 @@ for (let i = 1; i <= 25; i++) {
 }
 
 export const likes = getRandomInt(15, 200);
+
+// Массив случайных имён
+const names = [
+  'Алексей',
+  'Мария',
+  'Дмитрий',
+  'Елена',
+  'Сергей',
+  'Анна',
+  'Иван',
+  'Ольга',
+  'Николай',
+  'Татьяна'
+];
 
 // Функция: генерация массива комментариев
 function generateComments() {
@@ -36,21 +50,7 @@ function generateComments() {
 
   return comments;
 }
-generateComments()
-
-// Массив случайных имён
-const names = [
-  'Алексей',
-  'Мария',
-  'Дмитрий',
-  'Елена',
-  'Сергей',
-  'Анна',
-  'Иван',
-  'Ольга',
-  'Николай',
-  'Татьяна'
-];
+generateComments();
 
 export const messages = [
   'Всё отлично!',
