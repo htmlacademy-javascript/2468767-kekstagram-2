@@ -34,16 +34,16 @@ function generateComments() {
   const usedIds = new Set();
 
   for (let i = 0; i < commentsCount; i++) {
-    let userId;
+    let Id;
     // Уникальный id
     do {
-      userId = getRandomInt(1, 100000);
-    } while (usedIds.has(userId));
-    usedIds.add(userId);
+      Id = getRandomInt(1, 100000);
+    } while (usedIds.has(Id));
+    usedIds.add(Id);
   }
   // Формируем объект комментария: name в конце
   comments.push({
-    Id: userId,
+    Id:Id,
     avatar: 'img/avatar-{getRandomInt(1, 6)}.svg',
     message: getRandomMessage(),
     name: getRandomArrayName(names)
