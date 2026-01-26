@@ -48,10 +48,10 @@ function generateComments() {
       message: getRandomMessage(),
       name: getRandomArrayName(names)
     });
+  }
 
     return comments;
   }
-  generateComments();
 
   const messages = [
     'Всё отлично!',
@@ -69,4 +69,4 @@ function generateComments() {
       result.push(messages[getRandomInt(0, messages.length - 1)]);
     }
     return result.join(' ');
-  }};
+  };
