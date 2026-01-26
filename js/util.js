@@ -49,5 +49,5 @@ function generateComments() {
 comments = generateComments();
 //console.log(comments);
 
-export {getRandomInt,generateComments}
+export {getRandomInt,generateComments};
 
