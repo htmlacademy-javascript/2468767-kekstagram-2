@@ -5,7 +5,7 @@ function getRandomInt(min, max) {
 
 // Функция: рандомный выбор случайного индекса из массива
 function getRandomName() {
-  return Math.floor(Math.random() * lenght);
+  return Math.floor(Math.random() * ' '.lenght);
 }
 
 const getRandomArrayName = () => [getRandomName(0, ' '.length - 1)];
