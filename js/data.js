@@ -2,7 +2,7 @@ import { getRandomInt, getRandomName } from './util.js';
 // вычисляем случайный ID
 export const id = Array.from({ length: 25 }, (value, i) => i + 1);
 // вычисляем случайный url
-export const url = Array.from({ length: 25 }, (value, i) => ({ url: 'photos\${ i + 1 }.jpg' }));
+export const url = Array.from({ length: 25 }, (value, i) => ({ url: 'photos /${ i + 1 }.jpg' }));
 // Случайное описание
 export const descriptions = [];
 for (let i = 1; i <= 25; i++) {
@@ -59,7 +59,7 @@ function generateComments() {
   // Формируем объект комментария: name в конце
   comments.push({
     id: id,
-    avatar: 'img/avatar-\${getRandomInt(1, 6)}.svg',
+    avatar: 'img/avatar-/${getRandomInt(1, 6)}.svg',
     message: getRandomMessage(),
     name: getRandomName()
   });
