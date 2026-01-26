@@ -8,7 +8,7 @@ export const url = Array.from({ length: 25 }, (value, i) => ('{ url: photos ${ i
 export const descriptions = [];
 for (let i = 1; i <= 25; i++) {
   // eslint-disable-next-line no-template-curly-in-string
-  descriptions.push('{ description: 'Описание фотографии №${i}' }');
+  descriptions.push('{ description: Описание фотографии №${i} }');
 }
 
 export const likes = getRandomInt(15, 200);
