@@ -10,6 +10,33 @@ for (let i = 1; i <= 25; i++) {
   descriptions.push({ description: 'Описание фотографии №${i}' });
 }
 
+export const likes = getRandomInt(15, 200);
+
+// Функция: генерация массива комментариев
+function generateComments() {
+  const commentsCount = getRandomInt(0, 30); // 0–30 комментариев
+  const comments = [];
+  const usedIds = new Set();
+
+  for (let i = 0; i < commentsCount; i++) {
+    let id;
+    // Уникальный id
+    do {
+      id = getRandomInt(1, 100000);
+    } while (usedIds.has(id));
+    usedIds.add(id);
+  }
+  // Формируем объект комментария: name в конце
+  comments.push({
+    id: id,
+    avatar: 'img/avatar-/${getRandomInt(1, 6)}.svg',
+    message: getRandomMessage(),
+    name: getRandomName()
+  });
+
+  return comments;
+}
+
 // Массив случайных имён
  const names = [
   'Алексей',
@@ -43,32 +70,9 @@ function getRandomMessage() {
 }
 
 
-// Функция: генерация массива комментариев
-function generateComments() {
-  const commentsCount = getRandomInt(0, 30); // 0–30 комментариев
-  const comments = [];
-  const usedIds = new Set();
-
-  for (let i = 0; i < commentsCount; i++) {
-    let id;
-    // Уникальный id
-    do {
-      id = getRandomInt(1, 100000);
-    } while (usedIds.has(id));
-    usedIds.add(id);
-  }
-  // Формируем объект комментария: name в конце
-  comments.push({
-    id: id,
-    avatar: 'img/avatar-/${getRandomInt(1, 6)}.svg',
-    message: getRandomMessage(),
-    name: getRandomName()
-  });
-
-  return comments;
-}
 
 
-export const likes = getRandomInt(15, 200);
+
+
 
 
