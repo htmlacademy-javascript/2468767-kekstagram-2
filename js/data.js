@@ -52,7 +52,7 @@ function generateComments() {
 
   return comments;
 }
-
+generateComments();
 const messages = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
@@ -70,4 +70,3 @@ function getRandomMessage() {
   }
   return result.join(' ');
 };
-const commentsCount = generateComments(comments);
