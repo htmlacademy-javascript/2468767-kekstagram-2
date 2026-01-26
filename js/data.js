@@ -8,7 +8,7 @@ export const url = Array.from({ length: 25 }, (value, i) => ({ url: 'photos { i 
 export const descriptions = [];
 for (let i = 1; i <= 25; i++) {
   // eslint-disable-next-line no-template-curly-in-string
-  descriptions.push({ description:'Описание фотографии №{i}'});
+  descriptions.push({ description: 'Описание фотографии №{i}' });
 }
 
 export const likes = getRandomInt(15, 200);
@@ -41,32 +41,32 @@ function generateComments() {
     } while (usedIds.has(Id));
     usedIds.add(Id);
 
-  // Формируем объект комментария: name в конце
-  comments.push({
-    Id:Id,
-    avatar: 'img/avatar-{getRandomInt(1, 6)}.svg',
-    message: getRandomMessage(),
-    name: getRandomArrayName(names)
-  });
+    // Формируем объект комментария: name в конце
+    comments.push({
+      Id: Id,
+      avatar: 'img/avatar-{getRandomInt(1, 6)}.svg',
+      message: getRandomMessage(),
+      name: getRandomArrayName(names)
+    });
 
-  return comments;
-}
-generateComments();
-
-export const messages = [
-  'Всё отлично!',
-  'В целом всё неплохо. Но не всё.',
-  'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
-  'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
-  'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
-  'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
-];
-// Функция: случайное сообщение (1 или 2 предложения)
-function getRandomMessage() {
-  const count = getRandomInt(1, 2);
-  const result = [];
-  for (let i = 0; i < count; i++) {
-    result.push(messages[getRandomInt(0, messages.length - 1)]);
+    return comments;
   }
-  return result.join(' ');
-}
+  generateComments();
+
+  const messages = [
+    'Всё отлично!',
+    'В целом всё неплохо. Но не всё.',
+    'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
+    'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
+    'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
+    'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
+  ];
+  // Функция: случайное сообщение (1 или 2 предложения)
+  function getRandomMessage() {
+    const count = getRandomInt(1, 2);
+    const result = [];
+    for (let i = 0; i < count; i++) {
+      result.push(messages[getRandomInt(0, messages.length - 1)]);
+    }
+    return result.join(' ');
+  }
