@@ -40,7 +40,7 @@ function generateComments() {
       Id = getRandomInt(1, 100000);
     } while (usedIds.has(Id));
     usedIds.add(Id);
-  }
+
   // Формируем объект комментария: name в конце
   comments.push({
     Id:Id,
