@@ -43,8 +43,8 @@ function generateComments() {
   }
   // Формируем объект комментария: name в конце
   comments.push({
-    userId: userId,
-    avatar: 'img/avatar-${getRandomInt(1, 6)}.svg',
+    Id: userId,
+    avatar: 'img/avatar-\${getRandomInt(1, 6)}.svg',
     message: getRandomMessage(),
     name: getRandomArrayName(names)
   });
