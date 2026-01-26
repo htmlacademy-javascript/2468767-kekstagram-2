@@ -1,4 +1,4 @@
-import { getRandomInt, getRandomName } from './util.js';
+import { getRandomInt, getRandomArrayName } from './util.js';
 // вычисляем случайный ID
 export const id = Array.from({ length: 25 }, (value, i) => i + 1);
 // вычисляем случайный url
@@ -11,7 +11,7 @@ for (let i = 1; i <= 25; i++) {
 }
 
 // Массив случайных имён
-export const name = [
+ const names = [
   'Алексей',
   'Мария',
   'Дмитрий',
@@ -23,6 +23,7 @@ export const name = [
   'Николай',
   'Татьяна'
 ];
+
 export const messages = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',

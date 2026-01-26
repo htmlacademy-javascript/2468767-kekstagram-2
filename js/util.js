@@ -4,9 +4,11 @@ function getRandomInt(min, max) {
 }
 
 // Функция: рандомный выбор случайного индекса из массива
-function getRandomName(arr) {
-  return Math.floor(Math.random() * arr.lenght);
+function getRandomName() {
+  return Math.floor(Math.random() * elements.lenght);
 }
 
-export {getRandomInt,getRandomName};
+const getRandomArrayName = (elements) => elements[getRandomName(0, elements.length - 1)];
+
+export {getRandomInt,getRandomArrayName};
 
