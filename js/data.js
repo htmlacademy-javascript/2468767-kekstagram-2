@@ -2,12 +2,13 @@ import { getRandomInt, getRandomArrayName } from './util.js';
 // вычисляем случайный ID
 export const id = Array.from({ length: 25 }, (value, i) => i + 1);
 // вычисляем случайный url
-export const url = Array.from({ length: 25 }, (value, i) => ({ url: 'photos ${ i + 1 }.jpg' }));
+// eslint-disable-next-line no-unused-vars
+export const url = Array.from({ length: 25 }, (value, i) => ('{ url: 'photos ${ i + 1 }.jpg' }'));
 // Случайное описание
 export const descriptions = [];
 for (let i = 1; i <= 25; i++) {
   // eslint-disable-next-line no-template-curly-in-string
-  descriptions.push({ description: 'Описание фотографии №${i}' });
+  descriptions.push('{ description: 'Описание фотографии №${i}' }');
 }
 
 export const likes = getRandomInt(15, 200);
