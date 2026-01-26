@@ -1,4 +1,4 @@
-import { getRandomInt,getRandomMessage,getRandomName } from './util.js';
+import { getRandomInt,getRandomName } from './util.js';
 // вычисляем случайный ID
 export const id = Array.from({ length: 25 }, (value, i) => i + 1);
 // вычисляем случайный url
@@ -18,6 +18,15 @@ export const messages = [
   'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
+// Функция: случайное сообщение (1 или 2 предложения)
+function getRandomMessage() {
+  const count = getRandomInt(1, 2);
+  const result = [];
+  for (let i = 0; i < count; i++) {
+    result.push(messages[getRandomInt(0, messages.length - 1)]);
+  }
+  return result.join(' ');
+}
 
 // Массив случайных имён
 export const name = [
