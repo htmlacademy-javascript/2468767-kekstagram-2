@@ -69,4 +69,4 @@ function getRandomMessage() {
     result.push(messages[getRandomInt(0, messages.length - 1)]);
   }
   return result.join(' ');
-} ;
+};
