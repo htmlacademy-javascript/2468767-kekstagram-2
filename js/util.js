@@ -8,7 +8,7 @@ function getRandomName() {
   return Math.floor(Math.random() * elements.lenght);
 }
 
-const getRandomArrayName = (elements) => elements[getRandomName(0, elements.length - 1)];
+const getRandomArrayName = () => elements[getRandomName(0, length - 1)];
 
 export {getRandomInt,getRandomArrayName};
 
