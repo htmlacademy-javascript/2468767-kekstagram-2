@@ -3,7 +3,7 @@ import { getRandomInt, getRandomArrayName } from './util.js';
 export const id = Array.from({ length: 25 }, (value, i) => i + 1);
 // вычисляем случайный url
 // eslint-disable-next-line no-unused-vars
-export const url = Array.from({ length: 25 }, (value, i) => ('{ url: 'photos ${ i + 1 }.jpg' }'));
+export const url = Array.from({ length: 25 }, (value, i) => ('{ url: photos ${ i + 1 }.jpg }'));
 // Случайное описание
 export const descriptions = [];
 for (let i = 1; i <= 25; i++) {
