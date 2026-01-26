@@ -50,6 +50,7 @@ function generateComments() {
   'Николай',
   'Татьяна'
 ];
+getRandomArrayName(names);
 
 export const messages = [
   'Всё отлично!',
