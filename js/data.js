@@ -70,4 +70,3 @@ function getRandomMessage() {
   }
   return result.join(' ');
 }
-;
