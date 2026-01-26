@@ -2,7 +2,7 @@ import { getRandomInt, getRandomArrayName } from './util.js';
 // вычисляем случайный ID
 export const id = Array.from({ length: 25 }, (value, i) => i + 1);
 // вычисляем случайный url
-export const url = Array.from({ length: 25 }, (_value, _i) => ({ url: 'photos ${ i + 1 }.jpg' }));
+export const url = Array.from({ length: 25 }, (value, i) => ({ url: 'photos ${ i + 1 }.jpg' }));
 // Случайное описание
 export const descriptions = [];
 for (let i = 1; i <= 25; i++) {
@@ -33,12 +33,12 @@ function generateComments() {
   const usedIds = new Set();
 
   for (let i = 0; i < commentsCount; i++) {
-    let id;
+    let userId;
     // Уникальный id
     do {
       userId = getRandomInt(1, 100000);
-    } while (usedIds.has(id));
-    usedIds.add(id);
+    } while (usedIds.has(userId));
+    usedIds.add(userId);
   }
   // Формируем объект комментария: name в конце
   comments.push({
