@@ -1,3 +1,12 @@
 import './functions.js';
-import  './data.js';
-import  './util.js';
+import { id, url, descriptions, likes, comments } from './data.js';
+import './thumbs.js';
+
+
+const FOTO = [id, url, descriptions, likes, comments];
+//Проходимся по каждому массиву и генерм случайный индекс
+// eslint-disable-next-line no-unused-vars
+const FOTO_LIST = FOTO.map((subArr) => {
+  const randomIndex = Math.floor(Math.random() * subArr.length);
+  return subArr[randomIndex];
+});
