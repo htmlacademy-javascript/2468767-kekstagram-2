@@ -4,41 +4,37 @@ import { names, messages } from './data.js';
 const ARRAY_LEN = 25;
 // Функция: генерация массива комментариев
 function generateComments() {
-  const commentsCount = getRandomInt(0, 30); // 0–30 комментариев
+  const commentsCount = getRandomInt(0, 30);
   const comments = [];
   const usedIds = new Set();
+
+  const generateMessage = () => {
+    const count = getRandomInt(1, 2);
+    const result = [];
+    for (let i = 0; i < count; i++) {
+      result.push(messages[getRandomInt(0, messages.length - 1)]);
+    }
+    return result.join(' ');
+  };
+
   for (let i = 0; i < commentsCount; i++) {
     let commentsId;
-    // Уникальный id
     do {
       commentsId = getRandomInt(1, 100000);
     } while (usedIds.has(commentsId));
     usedIds.add(commentsId);
-    // Функция: случайное сообщение (1 или 2 предложения)
-    const generateComments = () => {
-      // Определяем количество комментариев (1 или 2)
-      const count = getRandomInt(1, 2);
-      const result = [];
 
-      // Выбираем случайные сообщения из массива
-      for (let i = 0; i < count; i++) {
-        result.push(messages[getRandomInt(0, messages.length - 1)]);
-      }
-
-      // Возвращаем строку с комментариями, разделёнными пробелом
-      return result.join(' ');
-    };
-    // Формируем объект комментария: name в конце
     comments.push({
       id: commentsId,
       avatar: `img/avatar-${getRandomInt(1, 6)}.svg`,
-      message: generateComments(messages),
+      message: generateMessage(),
       name: getRandomArrayName(names)
     });
   }
 
   return comments;
 }
+
 // функция, которая сразу возвращает объект по заданию
 const generatePost = (index) => ({
   id: index + 1,
