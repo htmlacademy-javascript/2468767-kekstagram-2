@@ -1,9 +1,9 @@
 import { getRandomInt, getRandomArrayName } from './util.js';
-import { names, messages } from './data.js';
+import { NAMES, MESSAGES } from './data.js';
 
 const ARRAY_LEN = 25;
 // Функция: генерация массива комментариев
-function generateComments() {
+const generateComments = () => {
   const commentsCount = getRandomInt(0, 30);
   const comments = [];
   const usedIds = new Set();
@@ -12,7 +12,7 @@ function generateComments() {
     const count = getRandomInt(1, 2);
     const result = [];
     for (let i = 0; i < count; i++) {
-      result.push(messages[getRandomInt(0, messages.length - 1)]);
+      result.push(MESSAGES[getRandomInt(0, MESSAGES.length - 1)]);
     }
     return result.join(' ');
   };
@@ -28,12 +28,12 @@ function generateComments() {
       id: commentsId,
       avatar: `img/avatar-${getRandomInt(1, 6)}.svg`,
       message: generateMessage(),
-      name: getRandomArrayName(names)
+      name: getRandomArrayName(NAMES)
     });
   }
 
   return comments;
-}
+};
 
 // функция, которая сразу возвращает объект по заданию
 const generatePost = (index) => ({
