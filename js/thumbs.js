@@ -1,39 +1,30 @@
 import { getRandomInt, getRandomArrayName } from './util.js';
-import { names, messages } from './data.js';
+import { NAMES, MESSAGES } from './data.js';
 
 const ARRAY_LEN = 25;
 // Функция: генерация массива комментариев
-function generateComments() {
+const generateComments = () => {
   const commentsCount = getRandomInt(0, 30);
-  const comments = [];
   const usedIds = new Set();
 
-  const generateMessage = () => {
-    const count = getRandomInt(1, 2);
-    const result = [];
-    for (let i = 0; i < count; i++) {
-      result.push(messages[getRandomInt(0, messages.length - 1)]);
-    }
-    return result.join(' ');
-  };
-
-  for (let i = 0; i < commentsCount; i++) {
+  return Array.from({ length: commentsCount }, () => {
     let commentsId;
     do {
       commentsId = getRandomInt(1, 100000);
     } while (usedIds.has(commentsId));
     usedIds.add(commentsId);
 
-    comments.push({
+    return {
       id: commentsId,
       avatar: `img/avatar-${getRandomInt(1, 6)}.svg`,
-      message: generateMessage(),
-      name: getRandomArrayName(names)
-    });
-  }
-
-  return comments;
-}
+      message: Array.from(
+        { length: getRandomInt(1, 2) },
+        () => MESSAGES[getRandomInt(0, MESSAGES.length - 1)]
+      ).join(' '),
+      name: getRandomArrayName(NAMES)
+    };
+  });
+};
 
 // функция, которая сразу возвращает объект по заданию
 const generatePost = (index) => ({
