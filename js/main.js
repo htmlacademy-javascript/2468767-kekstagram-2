@@ -1,6 +1,7 @@
 import { getThumbs } from './thumbs.js';
 import { renderThumbs } from './render.js';
 import { openFullScreen,initGallery } from './full-screen-vewer.js';
+import { showEditForm, hideEditForm } from './image-upload.js';
 
 // Получаем данные
 const thumbsList = getThumbs();
@@ -20,3 +21,4 @@ picturesContainer.addEventListener('click', (evt) => {
     openFullScreen(photoData);
   }
 });
+document.addEventListener('DOMContentLoaded', () => {});
