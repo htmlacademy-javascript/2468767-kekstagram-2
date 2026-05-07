@@ -212,11 +212,9 @@ if (typeof Pristine !== 'undefined' && uploadForm) {
 
 // Обработчик отправки формы
 if (uploadForm) {
- uploadForm.addEventListener('submit', (evt) => {
-   
+  uploadForm.addEventListener('submit', (evt) => {
     if (!pristine || !pristine.validate()) {
       evt.preventDefault(); // Прерываем отправку, если форма невалидна
-      alert('Форма заполнена неверно. Проверьте поля на ошибки.');
     }
   });
 }
