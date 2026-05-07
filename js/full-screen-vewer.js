@@ -208,4 +208,4 @@ const initThumbnailHandlers = (photoDataList) => {
   });
 };
 
-export {openFullScreen,initGallery,initThumbnailHandlers};
+export {initGallery,initThumbnailHandlers};
