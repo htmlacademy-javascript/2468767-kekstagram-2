@@ -214,7 +214,7 @@ if (typeof Pristine !== 'undefined' && uploadForm) {
 if (uploadForm) {
   uploadForm.addEventListener('submit', (evt) => {
     if (!pristine || !pristine.validate()) {
-      evt.preventDefault(); // Прерываем отправку, если форма невалидна
+      evt.preventDefault();
     }
   });
 }

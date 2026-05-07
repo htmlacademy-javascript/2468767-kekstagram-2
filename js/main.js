@@ -7,10 +7,11 @@ import { showEditForm, hideEditForm } from './image-upload.js';
 const thumbsList = getThumbs();
 
 // получаем контейнер после отрисвки в render и вызываем функцию
-const picturesContainer = renderThumbs(thumbsList);
-
+renderThumbs(thumbsList);
+showEditForm()
+hideEditForm()
 document.addEventListener('DOMContentLoaded', () => {
-initGallery();
-initThumbnailHandlers(thumbsList);
+  initGallery();
+  initThumbnailHandlers(thumbsList);
 });
 
