@@ -212,15 +212,11 @@ if (typeof Pristine !== 'undefined' && uploadForm) {
 
 // Обработчик отправки формы
 if (uploadForm) {
-  uploadForm.addEventListener('submit', (evt) => {
-    evt.preventDefault();
-    if (pristine && pristine.validate()) {
-      // Форма валидна — отправляем данные
-      const formData = new FormData(uploadForm);
-      throw new Error('Форма валидна, отправляем данные:', formData);
-      hideEditForm();
-    } else {
-      console.log('Форма невалидна, отправка отменена');
+ uploadForm.addEventListener('submit', (evt) => {
+   
+    if (!pristine || !pristine.validate()) {
+      evt.preventDefault(); // Прерываем отправку, если форма невалидна
+      alert('Форма заполнена неверно. Проверьте поля на ошибки.');
     }
   });
 }
