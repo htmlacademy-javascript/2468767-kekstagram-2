@@ -1,5 +1,5 @@
 import { isEscapeKey } from './util.js';
-import {getBigPicture,getBody, getFileInput,getOverlay,getPreviewImage,getCancelButton,getHashtagsInput,getDescriptionInput,getUploadForm} from './dom.js'
+import {getBody, getFileInput,getOverlay,getPreviewImage,getCancelButton,getHashtagsInput,getDescriptionInput,getUploadForm} from './dom.js';
 
 let pristine;
 
@@ -25,10 +25,18 @@ const hideEditForm = () => {
   body.classList.remove('modal-open');
 
   // Сбрасываем форму
-  if (fileInput) fileInput.value = '';
-  if (previewImage) previewImage.src = 'img/upload-default-image.jpg';
-  if (hashtagsInput) hashtagsInput.value = '';
-  if (descriptionInput) descriptionInput.value = '';
+  if (fileInput) {
+    fileInput.value = '';
+  }
+  if (previewImage) {
+    previewImage.src = 'img/upload-default-image.jpg';
+  }
+  if (hashtagsInput) {
+    hashtagsInput.value = '';
+  }
+  if (descriptionInput) {
+    descriptionInput.value = '';
+  }
 
   if (pristine) {
     pristine.reset();
@@ -44,7 +52,9 @@ if (fileInput) {
       const reader = new FileReader();
 
       reader.addEventListener('load', () => {
-        if (previewImage) previewImage.src = reader.result;
+        if (previewImage) {
+          previewImage.src = reader.result;
+        }
         showEditForm();
       });
 
@@ -85,7 +95,9 @@ if (overlay) {
 
 // Валидация хэштегов
 const validateHashtags = (value) => {
-  if (!value.trim()) return true; // Хэштеги необязательны
+  if (!value.trim()) {
+    return true; // Хэштеги необязательны
+  }
 
   const hashtags = value.trim().split(/\s+/);
 
@@ -131,20 +143,34 @@ const validateHashtags = (value) => {
 
 // Получение сообщения об ошибке для хэштегов
 const getHashtagError = (value) => {
-  if (!value.trim()) return true;
+  if (!value.trim()) {
+    return true;
+  }
 
   const hashtags = value.trim().split(/\s+/);
-  if (hashtags.length > 5) return 'Нельзя указать больше пяти хэштегов';
+  if (hashtags.length > 5) {
+    return 'Нельзя указать больше пяти хэштегов';
+  }
 
   const seenHashtags = new Set();
   for (const hashtag of hashtags) {
-    if (!hashtag.startsWith('#')) return 'Хэштег должен начинаться с символа #';
-    if (hashtag.length === 1) return 'Хэштег не может состоять только из одной решётки';
-    if (hashtag.length > 20) return 'Максимальная длина хэштега — 20 символов';
+    if (!hashtag.startsWith('#')) {
+      return 'Хэштег должен начинаться с символа #';
+    }
+    if (hashtag.length === 1) {
+      return 'Хэштег не может состоять только из одной решётки';
+    }
+    if (hashtag.length > 20) {
+      return 'Максимальная длина хэштега — 20 символов';
+    }
     const tagContent = hashtag.slice(1);
-    if (!/^[a-zA-Z0-9]+$/.test(tagContent)) return 'Хэштег может содержать только буквы и цифры после решётки';
+    if (!/^[a-zA-Z0-9]+$/.test(tagContent)) {
+      return 'Хэштег может содержать только буквы и цифры после решётки';
+    }
     const lowerHashtag = hashtag.toLowerCase();
-    if (seenHashtags.has(lowerHashtag)) return 'Один и тот же хэштег не может быть использован дважды';
+    if (seenHashtags.has(lowerHashtag)) {
+      return 'Один и тот же хэштег не может быть использован дважды';
+    }
     seenHashtags.add(lowerHashtag);
   }
   return 'Неверный формат хэштегов';
@@ -191,7 +217,7 @@ if (uploadForm) {
     if (pristine && pristine.validate()) {
       // Форма валидна — отправляем данные
       const formData = new FormData(uploadForm);
-      console.log('Форма валидна, отправляем данные:', formData);
+      throw new Error('Форма валидна, отправляем данные:', formData);
       hideEditForm();
     } else {
       console.log('Форма невалидна, отправка отменена');

@@ -24,7 +24,7 @@ const setupCloseHandlers = () => {
 
   if (!closeButton){
     return;
-  } 
+  }
 
   closeButton.addEventListener('click', closeFullScreen);
 
@@ -190,7 +190,6 @@ const initThumbnailHandlers = (photoDataList) => {
   const picturesContainer = document.querySelector('.pictures');
 
   if (!picturesContainer) {
-    throw new Error('Контейнера миниатюр .pictures не найден в DOM');
     return;
   }
 
