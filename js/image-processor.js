@@ -69,8 +69,6 @@ const initEffectSlider = () => {
   const container = getEffectLevelContainer();
 
   if (!slider || !container) {
-    // Отключаем правило для этой строки
-    // eslint-disable-next-line no-console
     console.warn('Элементы слайдера эффекта не найдены');
     return;
   }
