@@ -1,15 +1,19 @@
 import { getThumbs } from './thumbs.js';
 import { renderThumbs } from './render.js';
-import { openFullScreen,initGallery,initThumbnailHandlers} from './full-screen-vewer.js';
+import { initGallery,initThumbnailHandlers} from './full-screen-vewer.js';
 import { showEditForm, hideEditForm } from './image-upload.js';
-
+import { initScaleControls } from './image-processor.js';
 // Получаем данные
 const thumbsList = getThumbs();
 
 // получаем контейнер после отрисвки в render и вызываем функцию
-const picturesContainer = renderThumbs(thumbsList);
+renderThumbs(thumbsList);
+showEditForm();
+hideEditForm();
 
 document.addEventListener('DOMContentLoaded', () => {
-initGallery();
-initThumbnailHandlers(thumbsList);
+  initGallery();
+  initThumbnailHandlers(thumbsList);
+  initScaleControls();
 });
+

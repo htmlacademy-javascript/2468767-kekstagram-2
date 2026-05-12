@@ -1,5 +1,5 @@
 import { isEscapeKey } from './util.js';
-import { getBigPicture,getBody, getFileInput,getOverlay,getPreviewImage,getCancelButton,getHashtagsInput,getDescriptionInput,getUploadForm,getCommentsContainer,getCommentCountElement,getCommentsLoaderElement,getShownCommentCountElement,getTotalCommentCountElement,getLikesCountElement,getCaptionElement,getImageElement} from './dom.js';
+import { getBigPicture, getBody,getCommentsContainer, getCommentCountElement, getCommentsLoaderElement,getShownCommentCountElement, getTotalCommentCountElement,getLikesCountElement, getCaptionElement, getImageElement} from './dom.js';
 
 const COMMENTS_PER_PAGE = 5;
 let currentCommentsShown = 0;
@@ -12,8 +12,9 @@ const closeFullScreen = () => {
   if (bigPicture) {
     bigPicture.classList.add('hidden');
   }
-  getBody().classList.remove('modal-open');
-
+  if (body) {
+    body.classList.remove('modal-open');
+  }
   currentCommentsShown = 0;
 };
 
@@ -21,7 +22,9 @@ const closeFullScreen = () => {
 const setupCloseHandlers = () => {
   const closeButton = getBigPicture()?.querySelector('.big-picture__cancel');
 
-  if (!closeButton) return;
+  if (!closeButton){
+    return;
+  }
 
   closeButton.addEventListener('click', closeFullScreen);
 
@@ -97,10 +100,18 @@ const fillPostData = (photoData) => {
   const totalCommentsEl = getTotalCommentCountElement();
   const captionEl = getCaptionElement();
 
-  if (imageEl) imageEl.src = photoData.url;
-  if (likesEl) likesEl.textContent = photoData.likes;
-  if (totalCommentsEl) totalCommentsEl.textContent = photoData.comments.length;
-  if (captionEl) captionEl.textContent = photoData.descriptions || '';
+  if (imageEl) {
+    imageEl.src = photoData.url;
+  }
+  if (likesEl) {
+    likesEl.textContent = photoData.likes;
+  }
+  if (totalCommentsEl) {
+    totalCommentsEl.textContent = photoData.comments.length;
+  }
+  if (captionEl) {
+    captionEl.textContent = photoData.descriptions || '';
+  }
 };
 // Показываем элементы интерфейса
 const showInterfaceElements = () => {
@@ -174,18 +185,18 @@ const initGallery = () => {
   setupLoadMoreHandler();
 };
 
-document.addEventListener('DOMContentLoaded', initGallery);
 const initThumbnailHandlers = (photoDataList) => {
   const picturesContainer = document.querySelector('.pictures');
 
   if (!picturesContainer) {
-    console.warn('Контейнера миниатюр .pictures не найден в DOM');
     return;
   }
 
   picturesContainer.addEventListener('click', (evt) => {
     const thumbnail = evt.target.closest('.picture');
-    if (!thumbnail) return;
+    if (!thumbnail) {
+      return;
+    }
 
     const index = Number(thumbnail.dataset.id);
     const photoData = photoDataList[index];
@@ -196,4 +207,6 @@ const initThumbnailHandlers = (photoDataList) => {
   });
 };
 
-export {openFullScreen,initGallery,initThumbnailHandlers};
+document.addEventListener('DOMContentLoaded', initGallery);
+
+export {initGallery,initThumbnailHandlers};
