@@ -39,7 +39,7 @@ const updateScale = (newValue) => {
 const applyEffectToImage = (effect, value) => {
   const previewImage = getPreviewImage();
   if (!previewImage){
-   return;
+    return;
   }
   const effectConfig = EFFECTS[effect];
   if (effect === 'none' || !effectConfig.filter) {
@@ -76,8 +76,8 @@ const initEffectSlider = () => {
       },
       step: EFFECTS[DEFAULT_EFFECT].step,
       format: {
-        to: value => Math.round(value * 100) / 100, // округление до 2 знаков
-        from: value => parseFloat(value)
+        to: (value) => Math.round(value * 100) / 100, // округление до 2 знаков
+        from: (value) => parseFloat(value)
       }
     });
 
@@ -97,19 +97,10 @@ const initEffectSlider = () => {
       applyEffectToImage(currentEffect, value);
     });
   } catch (error) {
-     // Отключаем правило для этой строки
+    // Отключаем правило для этой строки
     // eslint-disable-next-line no-console
     console.error('Ошибка инициализации слайдера эффекта:', error);
   }
-};
-
-// Получает текущий выбранный эффект
-const getCurrentEffect = () => {
-  const effectsList = getEffectsList();
-  if (!effectsList) return DEFAULT_EFFECT;
-
-  const activeEffect = effectsList.querySelector('.effects__radio:checked');
-  return activeEffect ? activeEffect.value : DEFAULT_EFFECT;
 };
 
 // Обновляет слайдер при смене эффекта
@@ -118,7 +109,9 @@ const updateEffectSlider = (effect) => {
   const container = getEffectLevelContainer();
   const valueDisplay = getEffectLevelValue();
 
-  if (!slider || !slider.noUiSlider || !container || !valueDisplay) return;
+  if (!slider || !slider.noUiSlider || !container || !valueDisplay) {
+    return;
+  }
 
   const effectConfig = EFFECTS[effect];
 
@@ -142,11 +135,23 @@ const updateEffectSlider = (effect) => {
     applyEffectToImage(effect, effectConfig.min);
   }
 };
+// Получает текущий выбранный эффект
+const getCurrentEffect = () => {
+  const effectsList = getEffectsList();
+  if (!effectsList) {
+    return DEFAULT_EFFECT;
+  }
+
+  const activeEffect = effectsList.querySelector('.effects__radio:checked');
+  return activeEffect ? activeEffect.value : DEFAULT_EFFECT;
+};
 
 // Обработчик смены эффекта
 const initEffectsControls = () => {
   const effectsList = getEffectsList();
-  if (!effectsList) return;
+  if (!effectsList) {
+    return;
+  }
 
   effectsList.addEventListener('change', (e) => {
     if (e.target.matches('.effects__radio')) {
