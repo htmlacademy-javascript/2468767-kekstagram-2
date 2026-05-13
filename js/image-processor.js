@@ -10,6 +10,17 @@ import {
 } from './dom.js';
 import { SCALE, EFFECTS, DEFAULT_EFFECT } from './data.js';
 
+// Получает текущий выбранный эффект
+const getCurrentEffect = () => {
+  const effectsList = getEffectsList();
+  if (!effectsList) {
+    return DEFAULT_EFFECT;
+  }
+
+  const activeEffect = effectsList.querySelector('.effects__radio:checked');
+  return activeEffect ? activeEffect.value : DEFAULT_EFFECT;
+};
+
 // Применяет масштабирование к изображению
 const applyScaleToImage = (scalePercent) => {
   const scaleValue = scalePercent / 100;
@@ -134,16 +145,6 @@ const updateEffectSlider = (effect) => {
     // Применяем начальный эффект
     applyEffectToImage(effect, effectConfig.min);
   }
-};
-// Получает текущий выбранный эффект
-const getCurrentEffect = () => {
-  const effectsList = getEffectsList();
-  if (!effectsList) {
-    return DEFAULT_EFFECT;
-  }
-
-  const activeEffect = effectsList.querySelector('.effects__radio:checked');
-  return activeEffect ? activeEffect.value : DEFAULT_EFFECT;
 };
 
 // Обработчик смены эффекта
