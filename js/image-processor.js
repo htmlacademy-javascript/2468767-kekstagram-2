@@ -97,6 +97,8 @@ const initEffectSlider = () => {
       applyEffectToImage(currentEffect, value);
     });
   } catch (error) {
+     // Отключаем правило для этой строки
+    // eslint-disable-next-line no-console
     console.error('Ошибка инициализации слайдера эффекта:', error);
   }
 };
