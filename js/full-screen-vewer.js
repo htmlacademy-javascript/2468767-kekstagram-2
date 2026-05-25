@@ -185,7 +185,6 @@ const initGallery = () => {
   setupLoadMoreHandler();
 };
 
-document.addEventListener('DOMContentLoaded', initGallery);
 const initThumbnailHandlers = (photoDataList) => {
   const picturesContainer = document.querySelector('.pictures');
 
@@ -207,5 +206,7 @@ const initThumbnailHandlers = (photoDataList) => {
     }
   });
 };
+
+document.addEventListener('DOMContentLoaded', initGallery);
 
 export {initGallery,initThumbnailHandlers};

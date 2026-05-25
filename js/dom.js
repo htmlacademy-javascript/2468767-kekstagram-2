@@ -7,6 +7,13 @@ const getCancelButton = () => document.querySelector('.img-upload__cancel');
 const getHashtagsInput = () => document.querySelector('.text__hashtags');
 const getDescriptionInput = () => document.querySelector('.text__description');
 const getUploadForm = () => document.querySelector('#upload-select-image');
+const getScaleSmallerButton = () => document.querySelector('.scale__control--smaller');
+const getScaleBiggerButton = () => document.querySelector('.scale__control--bigger');
+const getScaleValueField = () => document.querySelector('.scale__control--value');
+const getEffectsList = () => document.querySelector('.effects');
+const getEffectLevelSlider = () => document.querySelector('.effect-level__slider');
+const getEffectLevelValue = () => document.querySelector('.effect-level__value');
+const getEffectLevelContainer = () => document.querySelector('.img-upload__effect-level');
 
 //получаем контейнер для списка комментариев
 const getCommentsContainer = () => {
@@ -48,4 +55,4 @@ const getImageElement = () => {
   const bigPicture = getBigPicture();
   return bigPicture?.querySelector('.big-picture__img img') || null;
 };
-export {getBigPicture,getBody, getFileInput,getOverlay,getPreviewImage,getCancelButton,getHashtagsInput,getDescriptionInput,getUploadForm,getCommentsContainer,getCommentCountElement,getCommentsLoaderElement,getShownCommentCountElement,getTotalCommentCountElement,getLikesCountElement,getCaptionElement,getImageElement};
+export {getBigPicture,getBody, getFileInput,getOverlay,getPreviewImage,getCancelButton,getHashtagsInput,getDescriptionInput,getUploadForm,getCommentsContainer,getCommentCountElement,getCommentsLoaderElement,getShownCommentCountElement,getTotalCommentCountElement,getLikesCountElement,getCaptionElement,getImageElement,getScaleSmallerButton,getScaleBiggerButton,getScaleValueField,getEffectsList,getEffectLevelSlider,getEffectLevelValue,getEffectLevelContainer};
