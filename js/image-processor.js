@@ -49,7 +49,7 @@ const updateScale = (newValue) => {
 // Применяет CSS‑фильтр к изображению
 const applyEffectToImage = (effect, value) => {
   const previewImage = getPreviewImage();
-  if (!previewImage){
+  if (!previewImage) {
     return;
   }
   const effectConfig = EFFECTS[effect];
@@ -62,13 +62,47 @@ const applyEffectToImage = (effect, value) => {
   previewImage.style.filter = `${effectConfig.filter}(${value}${unit})`;
 };
 
+// Создаёт слайдер уровня эффекта с заданными настройками
+const createEffectSlider = (slider, effect) => {
+  noUiSlider.create(slider, {
+    start: [EFFECTS[effect].min],
+    connect: 'lower',
+    range: {
+      min: EFFECTS[effect].min,
+      max: EFFECTS[effect].max
+    },
+    step: EFFECTS[effect].step,
+    format: {
+      to: (value) => Math.round(value * 100) / 100, // округление до 2 знаков
+      from: (value) => parseFloat(value)
+    }
+  });
+};
+
+// Настраивает обработчики событий для слайдера
+const setupSliderEventListeners = (slider) => {
+  slider.noUiSlider.on('update', (values, handle) => {
+    const currentEffect = getCurrentEffect();
+    const effectConfig = EFFECTS[currentEffect];
+    const value = Number(values[handle]);
+
+    // Обновляем отображение значения
+    const valueDisplay = getEffectLevelValue();
+    if (valueDisplay) {
+      valueDisplay.textContent = `${value}${effectConfig.unit}`;
+    }
+
+    // Применяем эффект
+    applyEffectToImage(currentEffect, value);
+  });
+};
+
 // Инициализация слайдера уровня эффекта
 const initEffectSlider = () => {
   const slider = getEffectLevelSlider();
   const container = getEffectLevelContainer();
 
   if (!slider || !container) {
-    // Отключаем правило для этой строки
     // eslint-disable-next-line no-console
     console.warn('Элементы слайдера эффекта не найдены');
     return;
@@ -78,37 +112,12 @@ const initEffectSlider = () => {
     // Скрываем контейнер слайдера по умолчанию
     container.classList.add('hidden');
 
-    noUiSlider.create(slider, {
-      start: [EFFECTS[DEFAULT_EFFECT].min],
-      connect: 'lower',
-      range: {
-        'min': EFFECTS[DEFAULT_EFFECT].min,
-        'max': EFFECTS[DEFAULT_EFFECT].max
-      },
-      step: EFFECTS[DEFAULT_EFFECT].step,
-      format: {
-        to: (value) => Math.round(value * 100) / 100, // округление до 2 знаков
-        from: (value) => parseFloat(value)
-      }
-    });
+    // Создаём слайдер с настройками по умолчанию
+    createEffectSlider(slider, DEFAULT_EFFECT);
 
-    // Обработчик изменения значения слайдера
-    slider.noUiSlider.on('update', (values, handle) => {
-      const currentEffect = getCurrentEffect();
-      const effectConfig = EFFECTS[currentEffect];
-      const value = Number(values[handle]);
-
-      // Обновляем отображение значения
-      const valueDisplay = getEffectLevelValue();
-      if (valueDisplay) {
-        valueDisplay.textContent = `${value}${effectConfig.unit}`;
-      }
-
-      // Применяем эффект
-      applyEffectToImage(currentEffect, value);
-    });
+    // Настраиваем обработчики событий
+    setupSliderEventListeners(slider);
   } catch (error) {
-    // Отключаем правило для этой строки
     // eslint-disable-next-line no-console
     console.error('Ошибка инициализации слайдера эффекта:', error);
   }
