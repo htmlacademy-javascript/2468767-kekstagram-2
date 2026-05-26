@@ -1,37 +1,75 @@
 const renderThumbs = (thumbsList) => {
-  // Находим шаблон
-  const templateFragment = document.querySelector('#picture').content;
-  const template = templateFragment.querySelector('a');
-
-  // Находим контейнер
+  const template = document.querySelector('#picture').content.querySelector('a');
   const picturesContainer = document.querySelector('.pictures');
 
-  // Создаём фрагмент для эффективной отрисовки
+  picturesContainer.querySelectorAll('.picture').forEach(el => el.remove());
+
   const fragment = document.createDocumentFragment();
 
   thumbsList.forEach((data, index) => {
-    // Клонируем шаблон
     const element = template.cloneNode(true);
-
-    // Находим нужные элементы внутри клона
     const img = element.querySelector('.picture__img');
     const likes = element.querySelector('.picture__likes');
     const comments = element.querySelector('.picture__comments');
 
-    // Заполняем данными
-    img.src = data.url;
-    img.alt = data.descriptions;
-    likes.textContent = data.likes;
-    comments.textContent = data.comments.length;
+    if (img) {
+      img.src = data.url;
+      img.alt = data.description || 'Фотография пользователя';
+    }
+    if (likes) {
+      likes.textContent = data.likes;
+    }
+    if (comments) {
+      comments.textContent = data.comments?.length || 0;
+    }
     element.dataset.id = index;
-
-    // Добавляем элемент во фрагмент
     fragment.appendChild(element);
   });
-
-  // Добавляем фрагмент в контейнер
   picturesContainer.appendChild(fragment);
-  return picturesContainer;
 };
 
-export { renderThumbs };
+const showErrorFromTemplate = () => {
+  const errorTemplate = document.querySelector('#data-error');
+  if (!errorTemplate) {
+    console.warn('Шаблон #data-error не найден');
+    return;
+  }
+  const errorElement = errorTemplate.content.cloneNode(true);
+  document.body.appendChild(errorElement);
+  setTimeout(() => {
+    const existingError = document.querySelector('.error-message');
+    if (existingError) {
+      existingError.remove();
+    }
+  }, 5000);
+};
+
+const loadThumbsFromServer = async () => {
+  console.log('Запуск загрузки данных с сервера...');
+
+  try {
+    console.log('Отправляем fetch-запрос к API...');
+    const response = await fetch('https://31.javascript.htmlacademy.pro/kekstagram/data');
+
+    console.log('Статус ответа:', response.status);
+    if (!response.ok) {
+      throw new Error(`Ошибка загрузки данных: ${response.status} ${response.statusText}`);
+    }
+
+    const thumbsList = await response.json();
+    console.log('Данные успешно получены:', thumbsList.length, 'фотографий');
+    renderThumbs(thumbsList);
+    return thumbsList;
+  } catch (error) {
+    console.error('Критическая ошибка загрузки:', error);
+    showErrorFromTemplate();
+    return [];
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('Страница загружена, инициализируем загрузку данных...');
+  loadThumbsFromServer();
+});
+
+export { renderThumbs, loadThumbsFromServer };

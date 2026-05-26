@@ -1,19 +1,29 @@
-import { getThumbs } from './thumbs.js';
-import { renderThumbs } from './render.js';
-import { initGallery,initThumbnailHandlers} from './full-screen-vewer.js';
+import { renderThumbs, loadThumbsFromServer } from './render.js';
+import { initGallery, initThumbnailHandlers } from './full-screen-viewer.js';
 import { showEditForm, hideEditForm } from './image-upload.js';
 import { initScaleControls } from './image-processor.js';
-// Получаем данные
-const thumbsList = getThumbs();
 
-// получаем контейнер после отрисвки в render и вызываем функцию
-renderThumbs(thumbsList);
-showEditForm();
-hideEditForm();
+// Глобальная переменная для хранения данных
+let thumbsList = [];
 
+// Функция инициализации приложения
+const initApp = async () => {
+  try {
+    // Загружаем данные с сервера
+    thumbsList = await loadThumbsFromServer();
+
+    // Инициализируем основные компоненты только после загрузки данных
+    initGallery();
+    initThumbnailHandlers(thumbsList);
+    initScaleControls();
+
+    console.log('Приложение инициализировано успешно');
+  } catch (error) {
+    console.error('Ошибка инициализации приложения:', error);
+  }
+};
+
+// Обработчик готовности DOM
 document.addEventListener('DOMContentLoaded', () => {
-  initGallery();
-  initThumbnailHandlers(thumbsList);
-  initScaleControls();
+  initApp();
 });
-
