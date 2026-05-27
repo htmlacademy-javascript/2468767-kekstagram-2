@@ -37,7 +37,7 @@ const showSuccessMessage = () => {
   }
 
   const fragment = successTemplate.content.cloneNode(true);
-  currentSuccessElement = fragment.firstElementChild; // Извлекаем реальный DOM-элемент
+  currentSuccessElement = fragment.firstElementChild;
 
   if (!currentSuccessElement) {
     console.warn('Не удалось извлечь элемент из шаблона #success');
@@ -89,7 +89,7 @@ const showErrorMessage = (errorMessage) => {
   }
 
   const fragment = errorTemplate.content.cloneNode(true);
-  currentErrorElement = fragment.firstElementChild; // Извлекаем реальный DOM-элемент
+  currentErrorElement = fragment.firstElementChild;
 
   if (!currentErrorElement) {
     console.warn('Не удалось извлечь элемент из шаблона #error');
@@ -113,6 +113,33 @@ const showErrorMessage = (errorMessage) => {
   document.addEventListener('click', onErrorClickOutside);
 };
 
+const sendFormData = async (formData) => {
+  const submitButton = document.querySelector('.img-upload__submit');
+
+  try {
+    // Блокируем кнопку отправки
+    submitButton.disabled = true;
+    submitButton.textContent = 'Отправка...';
+
+    const response = await fetch('https://31.javascript.htmlacademy.pro/kekstagram', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw error;
+  } finally {
+    // Разблокируем кнопку после завершения запроса
+    submitButton.disabled = false;
+    submitButton.textContent = 'Отправить';
+  }
+};
+
 const setupEventHandlers = (
   fileInput,
   cancelButton,
@@ -124,41 +151,40 @@ const setupEventHandlers = (
   showEditForm,
   hideEditForm,
   previewImage,
-  body
+  body,
+  onCancelClick,
+  onSubmitSuccess
 ) => {
-  if (fileInput) {
-    fileInput.addEventListener('change', (evt) => {
-      const file = evt.target.files[0];
-      if (!file) {
-        console.warn('Файл не выбран');
+  // Обработчик кнопки отмены
+  if (cancelButton && onCancelClick) {
+    cancelButton.addEventListener('click', onCancelClick);
+  }
+
+  // Обработчик отправки формы
+  if (uploadForm) {
+    uploadForm.addEventListener('submit', async (evt) => {
+      evt.preventDefault();
+
+      if (!pristine || !pristine.validate()) {
         return;
       }
-      if (file && file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.addEventListener('load', () => {
-          if (previewImage) {
-            previewImage.src = reader.result;
-          } else {
-            console.warn('Элемент previewImage не найден');
-          }
-          showEditForm(overlay, body); // Используем переданный body
-        });
-        reader.readAsDataURL(file);
-      } else {
-        console.warn('Выбран не-изобразительный файл:', file.type);
+
+      try {
+        // Отправляем данные на сервер
+        await sendFormData(new FormData(uploadForm));
+
+        // Показ успеха и закрытие формы с сбросом
+        showSuccessMessage();
+        onSubmitSuccess(); // Вызываем callback для сброса формы
+      } catch (error) {
+        console.error('Ошибка отправки формы:', error);
+        // Показ ошибки — форма остаётся открытой для повторной отправки
+        showErrorMessage('Не удалось отправить форму. Проверьте подключение и попробуйте ещё раз.');
       }
     });
   }
 
-  // Обработчик закрытия по кнопке «Закрыть»
-  if (cancelButton) {
-    cancelButton.addEventListener('click', (evt) => {
-      evt.preventDefault();
-      hideEditForm(overlay, body, fileInput, previewImage, hashtagsInput, descriptionInput, pristine);
-    });
-  }
-
-  // Обработчик закрытия по Esc
+  // Обработчик закрытия по Esc (вне формы редактирования)
   document.addEventListener('keydown', (evt) => {
     if (isEscapeKey(evt) && overlay && !overlay.classList.contains('hidden')) {
       const isInInput = document.activeElement === hashtagsInput || document.activeElement === descriptionInput;
@@ -169,7 +195,7 @@ const setupEventHandlers = (
     }
   });
 
-  // Предотвращение закрытия при клике вне формы
+  // Обработчик закрытия overlay при клике вне формы
   if (overlay) {
     overlay.addEventListener('click', (evt) => {
       if (!evt.target.closest('.img-upload__wrapper')) {
@@ -177,26 +203,6 @@ const setupEventHandlers = (
       }
     });
   }
-
-   // Обработчик отправки формы с обработкой успеха/ошибки
-  if (uploadForm) {
-    uploadForm.addEventListener('submit', async (evt) => {
-      evt.preventDefault();
-      if (!pristine || !pristine.validate()) {
-        return;
-      }
-      try {
-        // Здесь должна быть функция отправки данных на сервер
-        await sendFormData(new FormData(uploadForm));
-        // Показ успеха и закрытие формы
-        showSuccessMessage();
-        hideEditForm(overlay, body, fileInput, previewImage, hashtagsInput, descriptionInput, pristine);
-      } catch (error) {
-        // Показ ошибки — форма остаётся открытой для повторной отправки
-        showErrorMessage('Не удалось отправить форму. Проверьте подключение и попробуйте ещё раз.');
-      }
-    });
-  }
 };
 
-export { setupEventHandlers, showSuccessMessage, showErrorMessage };
+export { setupEventHandlers, showSuccessMessage, showErrorMessage, sendFormData };

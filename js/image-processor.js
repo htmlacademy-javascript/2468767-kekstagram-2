@@ -6,7 +6,10 @@ import {
   getEffectsList,
   getEffectLevelSlider,
   getEffectLevelValue,
-  getEffectLevelContainer
+  getEffectLevelContainer,
+  getHashtagsInput,
+  getDescriptionInput,
+  getFileInput
 } from './dom.js';
 import { SCALE, EFFECTS, DEFAULT_EFFECT } from './data.js';
 
@@ -156,6 +159,32 @@ const updateEffectSlider = (effect) => {
   }
 };
 
+// Сброс масштаба к 100 %
+const resetScale = () => {
+  updateScale(SCALE.DEFAULT_VALUE);
+};
+
+// Сброс эффекта на «Оригинал»
+const resetEffect = () => {
+  const effectsList = getEffectsList();
+  if (!effectsList) return;
+
+  // Сбрасываем все радио‑кнопки эффектов
+  const effectButtons = effectsList.querySelectorAll('.effects__radio');
+  effectButtons.forEach(button => {
+    button.checked = false;
+  });
+
+  // Выбираем эффект «none»
+  const originalEffectButton = effectsList.querySelector('#effect-none');
+  if (originalEffectButton) {
+    originalEffectButton.checked = true;
+  }
+
+  // Обновляем слайдер
+  updateEffectSlider('none');
+};
+
 // Обработчик смены эффекта
 const initEffectsControls = () => {
   const effectsList = getEffectsList();
@@ -204,5 +233,28 @@ const initScaleControls = () => {
   // Устанавливаем эффект по умолчанию
   updateEffectSlider(DEFAULT_EFFECT);
 };
+// Полный сброс состояния формы редактирования изображения
+const resetImageFormState = () => {
+  // 1. Сброс масштаба к 100 %
+  resetScale();
 
-export { initScaleControls };
+  // 2. Сброс эффекта на «Оригинал»
+  resetEffect();
+
+  // 3. Очистка полей ввода
+  const hashtagsInput = getHashtagsInput();
+  const descriptionInput = getDescriptionInput();
+  if (hashtagsInput) hashtagsInput.value = '';
+  if (descriptionInput) descriptionInput.value = '';
+
+  // 4. Очистка поля загрузки фотографии
+  const fileInput = getFileInput();
+  if (fileInput) fileInput.value = '';
+
+  // 5. Сброс превью изображения
+  const previewImage = getPreviewImage();
+  if (previewImage) previewImage.src = 'img/upload-default-image.jpg';
+};
+
+export { initScaleControls, resetImageFormState };
+
