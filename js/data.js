@@ -75,7 +75,7 @@ const EFFECTS = {
   }
 };
 // Значение по умолчанию для эффекта
- const DEFAULT_EFFECT = 'none';
+const DEFAULT_EFFECT = 'none';
 
 export {NAMES, MESSAGES,SCALE, EFFECTS, DEFAULT_EFFECT};
 
