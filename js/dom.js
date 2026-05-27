@@ -57,7 +57,7 @@ const getImageElement = () => {
 };
 export {
   getBigPicture,
-  getBody, 
+  getBody,
   getFileInput,
   getOverlay,
   getPreviewImage,

@@ -167,11 +167,13 @@ const resetScale = () => {
 // Сброс эффекта на «Оригинал»
 const resetEffect = () => {
   const effectsList = getEffectsList();
-  if (!effectsList) return;
+  if (!effectsList){
+     return;
+  }
 
   // Сбрасываем все радио‑кнопки эффектов
   const effectButtons = effectsList.querySelectorAll('.effects__radio');
-  effectButtons.forEach(button => {
+  effectButtons.forEach((button) => {
     button.checked = false;
   });
 
@@ -244,16 +246,24 @@ const resetImageFormState = () => {
   // 3. Очистка полей ввода
   const hashtagsInput = getHashtagsInput();
   const descriptionInput = getDescriptionInput();
-  if (hashtagsInput) hashtagsInput.value = '';
-  if (descriptionInput) descriptionInput.value = '';
+  if (hashtagsInput) {
+    hashtagsInput.value = '';
+  }
+  if (descriptionInput) {
+    descriptionInput.value = '';
+  }
 
   // 4. Очистка поля загрузки фотографии
   const fileInput = getFileInput();
-  if (fileInput) fileInput.value = '';
+  if (fileInput) {
+    fileInput.value = '';
+  }
 
   // 5. Сброс превью изображения
   const previewImage = getPreviewImage();
-  if (previewImage) previewImage.src = 'img/upload-default-image.jpg';
+  if (previewImage) {
+    previewImage.src = 'img/upload-default-image.jpg';
+  }
 };
 
 export { initScaleControls, resetImageFormState };
