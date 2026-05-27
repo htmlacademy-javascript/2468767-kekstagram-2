@@ -2,7 +2,7 @@ const renderThumbs = (thumbsList) => {
   const template = document.querySelector('#picture').content.querySelector('a');
   const picturesContainer = document.querySelector('.pictures');
 
-  picturesContainer.querySelectorAll('.picture').forEach(el => el.remove());
+  picturesContainer.querySelectorAll('.picture').forEach((el) => el.remove());
 
   const fragment = document.createDocumentFragment();
 
@@ -31,8 +31,7 @@ const renderThumbs = (thumbsList) => {
 const showErrorFromTemplate = () => {
   const errorTemplate = document.querySelector('#data-error');
   if (!errorTemplate) {
-    console.warn('Шаблон #data-error не найден');
-    return;
+    throw new Error('Шаблон #data-error не найден');
   }
   const errorElement = errorTemplate.content.cloneNode(true);
   document.body.appendChild(errorElement);
@@ -45,31 +44,27 @@ const showErrorFromTemplate = () => {
 };
 
 const loadThumbsFromServer = async () => {
-  console.log('Запуск загрузки данных с сервера...');
 
   try {
-    console.log('Отправляем fetch-запрос к API...');
     const response = await fetch('https://31.javascript.htmlacademy.pro/kekstagram/data');
-
-    console.log('Статус ответа:', response.status);
     if (!response.ok) {
       throw new Error(`Ошибка загрузки данных: ${response.status} ${response.statusText}`);
     }
 
     const thumbsList = await response.json();
-    console.log('Данные успешно получены:', thumbsList.length, 'фотографий');
     renderThumbs(thumbsList);
     return thumbsList;
   } catch (error) {
-    console.error('Критическая ошибка загрузки:', error);
-    showErrorFromTemplate();
-    return [];
+    throw new Error(`Критическая ошибка загрузки: ${error.message}`);
   }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('Страница загружена, инициализируем загрузку данных...');
-  loadThumbsFromServer();
+
+  loadThumbsFromServer().catch((error) => {
+    console.error('Не удалось загрузить данные:', error);
+    showErrorFromTemplate();
+  });
 });
 
 export { renderThumbs, loadThumbsFromServer };

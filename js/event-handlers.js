@@ -3,6 +3,26 @@ import { isEscapeKey } from './util.js';
 let currentSuccessElement = null;
 let currentErrorElement = null;
 
+// Объявляем функции удаления ДО их использования в обработчиках
+const removeSuccessMessage = () => {
+  if (currentSuccessElement && currentSuccessElement.parentNode) {
+    currentSuccessElement.parentNode.removeChild(currentSuccessElement);
+    currentSuccessElement = null;
+    document.removeEventListener('keydown', onSuccessKeydown);
+    document.removeEventListener('click', onSuccessClickOutside);
+  }
+};
+
+const removeErrorMessage = () => {
+  if (currentErrorElement && currentErrorElement.parentNode) {
+    currentErrorElement.parentNode.removeChild(currentErrorElement);
+    currentErrorElement = null;
+    document.removeEventListener('keydown', onErrorKeydown);
+    document.removeEventListener('click', onErrorClickOutside);
+  }
+};
+
+// Обработчики событий — теперь используют уже объявленные функции
 const onSuccessKeydown = (evt) => {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
@@ -29,25 +49,19 @@ const onErrorClickOutside = (evt) => {
   }
 };
 
-// Удаление сообщения об успехе
-const removeSuccessMessage = () => {
-  if (currentSuccessElement && currentSuccessElement.parentNode) {
-    currentSuccessElement.parentNode.removeChild(currentSuccessElement);
-    currentSuccessElement = null;
-    document.removeEventListener('keydown', onSuccessKeydown);
-    document.removeEventListener('click', onSuccessClickOutside);
-  }
-};
-
 // Показ сообщения об успешной отправке
 const showSuccessMessage = () => {
   const successTemplate = document.querySelector('#success');
-  if (!successTemplate) return;
+  if (!successTemplate) {
+    return;
+  }
 
   const fragment = successTemplate.content.cloneNode(true);
   currentSuccessElement = fragment.firstElementChild;
 
-  if (!currentSuccessElement) return;
+  if (!currentSuccessElement) {
+    return;
+  }
 
   document.body.appendChild(currentSuccessElement);
 
@@ -60,25 +74,19 @@ const showSuccessMessage = () => {
   document.addEventListener('click', onSuccessClickOutside);
 };
 
-// Удаление сообщения об ошибке
-const removeErrorMessage = () => {
-  if (currentErrorElement && currentErrorElement.parentNode) {
-    currentErrorElement.parentNode.removeChild(currentErrorElement);
-    currentErrorElement = null;
-    document.removeEventListener('keydown', onErrorKeydown);
-    document.removeEventListener('click', onErrorClickOutside);
-  }
-};
-
 // Показ сообщения об ошибке отправки
 const showErrorMessage = (errorMessage) => {
   const errorTemplate = document.querySelector('#error');
-  if (!errorTemplate) return;
+  if (!errorTemplate) {
+    return;
+  }
 
   const fragment = errorTemplate.content.cloneNode(true);
   currentErrorElement = fragment.firstElementChild;
 
-  if (!currentErrorElement) return;
+  if (!currentErrorElement) {
+    return;
+  }
 
   // Устанавливаем текст сообщения
   const errorText = currentErrorElement.querySelector('.error__title');

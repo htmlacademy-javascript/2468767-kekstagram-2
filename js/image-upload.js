@@ -1,7 +1,7 @@
 import {
   getBody, getFileInput, getOverlay, getPreviewImage, getCancelButton,
   getHashtagsInput, getDescriptionInput, getUploadForm
-} from './dom.js';getHashtagError
+} from './dom.js';
 import { initValidation } from './validation.js';
 import { setupEventHandlers } from './event-handlers.js';
 import { showEditForm, hideEditForm } from './form-manager.js';
@@ -21,11 +21,9 @@ const initUploadForm = () => {
   // Проверка доступности ключевых элементов
   if (!fileInput) {
     throw new Error('Элемент загрузки файла не найден');
-    return;
   }
   if (!previewImage) {
     throw new Error('Элемент превью изображения не найден');
-    return;
   }
 
   // Инициализация валидации
@@ -43,15 +41,13 @@ const initUploadForm = () => {
       };
       reader.readAsDataURL(file);
     } else {
-      throw new Error('Пожалуйста, выберите графический файл (jpg, png и т. д.)');
       // Очищаем поле, если выбран неграфический файл
       fileInput.value = '';
+      
     }
   };
 
-  /**
-   * Обработчик закрытия формы по кнопке отмены
-   */
+  //Обработчик закрытия формы по кнопке отмены
   const handleCancelClick = (evt) => {
     evt.preventDefault();
     // Сначала сбрасываем все данные формы
@@ -60,9 +56,7 @@ const initUploadForm = () => {
     hideEditForm(overlay, body, fileInput, previewImage, hashtagsInput, descriptionInput, pristine);
   };
 
-  /**
-   * Обработчик успешной отправки формы
-   */
+  //Обработчик успешной отправки формы
   const handleFormSubmitSuccess = () => {
     // Сначала сбрасываем все данные формы
     resetImageFormState();
