@@ -6,7 +6,10 @@ import {
   getEffectsList,
   getEffectLevelSlider,
   getEffectLevelValue,
-  getEffectLevelContainer
+  getEffectLevelContainer,
+  getHashtagsInput,
+  getDescriptionInput,
+  getFileInput
 } from './dom.js';
 import { SCALE, EFFECTS, DEFAULT_EFFECT } from './data.js';
 
@@ -49,7 +52,7 @@ const updateScale = (newValue) => {
 // Применяет CSS‑фильтр к изображению
 const applyEffectToImage = (effect, value) => {
   const previewImage = getPreviewImage();
-  if (!previewImage){
+  if (!previewImage) {
     return;
   }
   const effectConfig = EFFECTS[effect];
@@ -62,13 +65,47 @@ const applyEffectToImage = (effect, value) => {
   previewImage.style.filter = `${effectConfig.filter}(${value}${unit})`;
 };
 
+// Создаёт слайдер уровня эффекта с заданными настройками
+const createEffectSlider = (slider, effect) => {
+  noUiSlider.create(slider, {
+    start: [EFFECTS[effect].min],
+    connect: 'lower',
+    range: {
+      min: EFFECTS[effect].min,
+      max: EFFECTS[effect].max
+    },
+    step: EFFECTS[effect].step,
+    format: {
+      to: (value) => Math.round(value * 100) / 100, // округление до 2 знаков
+      from: (value) => parseFloat(value)
+    }
+  });
+};
+
+// Настраивает обработчики событий для слайдера
+const setupSliderEventListeners = (slider) => {
+  slider.noUiSlider.on('update', (values, handle) => {
+    const currentEffect = getCurrentEffect();
+    const effectConfig = EFFECTS[currentEffect];
+    const value = Number(values[handle]);
+
+    // Обновляем отображение значения
+    const valueDisplay = getEffectLevelValue();
+    if (valueDisplay) {
+      valueDisplay.textContent = `${value}${effectConfig.unit}`;
+    }
+
+    // Применяем эффект
+    applyEffectToImage(currentEffect, value);
+  });
+};
+
 // Инициализация слайдера уровня эффекта
 const initEffectSlider = () => {
   const slider = getEffectLevelSlider();
   const container = getEffectLevelContainer();
 
   if (!slider || !container) {
-    // Отключаем правило для этой строки
     // eslint-disable-next-line no-console
     console.warn('Элементы слайдера эффекта не найдены');
     return;
@@ -78,37 +115,12 @@ const initEffectSlider = () => {
     // Скрываем контейнер слайдера по умолчанию
     container.classList.add('hidden');
 
-    noUiSlider.create(slider, {
-      start: [EFFECTS[DEFAULT_EFFECT].min],
-      connect: 'lower',
-      range: {
-        'min': EFFECTS[DEFAULT_EFFECT].min,
-        'max': EFFECTS[DEFAULT_EFFECT].max
-      },
-      step: EFFECTS[DEFAULT_EFFECT].step,
-      format: {
-        to: (value) => Math.round(value * 100) / 100, // округление до 2 знаков
-        from: (value) => parseFloat(value)
-      }
-    });
+    // Создаём слайдер с настройками по умолчанию
+    createEffectSlider(slider, DEFAULT_EFFECT);
 
-    // Обработчик изменения значения слайдера
-    slider.noUiSlider.on('update', (values, handle) => {
-      const currentEffect = getCurrentEffect();
-      const effectConfig = EFFECTS[currentEffect];
-      const value = Number(values[handle]);
-
-      // Обновляем отображение значения
-      const valueDisplay = getEffectLevelValue();
-      if (valueDisplay) {
-        valueDisplay.textContent = `${value}${effectConfig.unit}`;
-      }
-
-      // Применяем эффект
-      applyEffectToImage(currentEffect, value);
-    });
+    // Настраиваем обработчики событий
+    setupSliderEventListeners(slider);
   } catch (error) {
-    // Отключаем правило для этой строки
     // eslint-disable-next-line no-console
     console.error('Ошибка инициализации слайдера эффекта:', error);
   }
@@ -145,6 +157,32 @@ const updateEffectSlider = (effect) => {
     // Применяем начальный эффект
     applyEffectToImage(effect, effectConfig.min);
   }
+};
+
+// Сброс масштаба к 100 %
+const resetScale = () => {
+  updateScale(SCALE.DEFAULT_VALUE);
+};
+
+// Сброс эффекта на «Оригинал»
+const resetEffect = () => {
+  const effectsList = getEffectsList();
+  if (!effectsList) return;
+
+  // Сбрасываем все радио‑кнопки эффектов
+  const effectButtons = effectsList.querySelectorAll('.effects__radio');
+  effectButtons.forEach(button => {
+    button.checked = false;
+  });
+
+  // Выбираем эффект «none»
+  const originalEffectButton = effectsList.querySelector('#effect-none');
+  if (originalEffectButton) {
+    originalEffectButton.checked = true;
+  }
+
+  // Обновляем слайдер
+  updateEffectSlider('none');
 };
 
 // Обработчик смены эффекта
@@ -195,5 +233,28 @@ const initScaleControls = () => {
   // Устанавливаем эффект по умолчанию
   updateEffectSlider(DEFAULT_EFFECT);
 };
+// Полный сброс состояния формы редактирования изображения
+const resetImageFormState = () => {
+  // 1. Сброс масштаба к 100 %
+  resetScale();
 
-export { initScaleControls };
+  // 2. Сброс эффекта на «Оригинал»
+  resetEffect();
+
+  // 3. Очистка полей ввода
+  const hashtagsInput = getHashtagsInput();
+  const descriptionInput = getDescriptionInput();
+  if (hashtagsInput) hashtagsInput.value = '';
+  if (descriptionInput) descriptionInput.value = '';
+
+  // 4. Очистка поля загрузки фотографии
+  const fileInput = getFileInput();
+  if (fileInput) fileInput.value = '';
+
+  // 5. Сброс превью изображения
+  const previewImage = getPreviewImage();
+  if (previewImage) previewImage.src = 'img/upload-default-image.jpg';
+};
+
+export { initScaleControls, resetImageFormState };
+

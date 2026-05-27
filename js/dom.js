@@ -55,4 +55,29 @@ const getImageElement = () => {
   const bigPicture = getBigPicture();
   return bigPicture?.querySelector('.big-picture__img img') || null;
 };
-export {getBigPicture,getBody, getFileInput,getOverlay,getPreviewImage,getCancelButton,getHashtagsInput,getDescriptionInput,getUploadForm,getCommentsContainer,getCommentCountElement,getCommentsLoaderElement,getShownCommentCountElement,getTotalCommentCountElement,getLikesCountElement,getCaptionElement,getImageElement,getScaleSmallerButton,getScaleBiggerButton,getScaleValueField,getEffectsList,getEffectLevelSlider,getEffectLevelValue,getEffectLevelContainer};
+export {
+  getBigPicture,
+  getBody, 
+  getFileInput,
+  getOverlay,
+  getPreviewImage,
+  getCancelButton,
+  getHashtagsInput,
+  getDescriptionInput,
+  getUploadForm,
+  getCommentsContainer,
+  getCommentCountElement,
+  getCommentsLoaderElement,
+  getShownCommentCountElement,
+  getTotalCommentCountElement,
+  getLikesCountElement,
+  getCaptionElement,
+  getImageElement,
+  getScaleSmallerButton,
+  getScaleBiggerButton,
+  getScaleValueField,
+  getEffectsList,
+  getEffectLevelSlider,
+  getEffectLevelValue,
+  getEffectLevelContainer
+};
