@@ -168,7 +168,7 @@ const resetScale = () => {
 const resetEffect = () => {
   const effectsList = getEffectsList();
   if (!effectsList){
-     return;
+      return;
   }
 
   // Сбрасываем все радио‑кнопки эффектов

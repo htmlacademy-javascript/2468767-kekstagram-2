@@ -15,7 +15,8 @@ const initApp = async () => {
     initScaleControls();
     initUploadForm(); // Вызываем после загрузки данных
   } catch (error) {
-    console.error('Ошибка инициализации:', error);
+    // Заменяем console.error на throw — передаём ошибку наверх для обработки
+    throw new Error(`Ошибка инициализации: ${error.message}`);
   }
 };
 
@@ -23,3 +24,4 @@ const initApp = async () => {
 document.addEventListener('DOMContentLoaded', () => {
   initApp();
 });
+

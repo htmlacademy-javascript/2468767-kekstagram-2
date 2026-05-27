@@ -3,6 +3,32 @@ import { isEscapeKey } from './util.js';
 let currentSuccessElement = null;
 let currentErrorElement = null;
 
+const onSuccessKeydown = (evt) => {
+  if (isEscapeKey(evt)) {
+    evt.preventDefault();
+    removeSuccessMessage();
+  }
+};
+
+const onSuccessClickOutside = (evt) => {
+  if (!currentSuccessElement?.contains(evt.target)) {
+    removeSuccessMessage();
+  }
+};
+
+const onErrorKeydown = (evt) => {
+  if (isEscapeKey(evt)) {
+    evt.preventDefault();
+    removeErrorMessage();
+  }
+};
+
+const onErrorClickOutside = (evt) => {
+  if (!currentErrorElement?.contains(evt.target)) {
+    removeErrorMessage();
+  }
+};
+
 // Удаление сообщения об успехе
 const removeSuccessMessage = () => {
   if (currentSuccessElement && currentSuccessElement.parentNode) {
@@ -13,36 +39,15 @@ const removeSuccessMessage = () => {
   }
 };
 
-// Обработчик нажатия клавиш для сообщения успеха
-const onSuccessKeydown = (evt) => {
-  if (isEscapeKey(evt)) {
-    evt.preventDefault();
-    removeSuccessMessage();
-  }
-};
-
-// Обработчик клика вне блока сообщения успеха
-const onSuccessClickOutside = (evt) => {
-  if (!currentSuccessElement?.contains(evt.target)) {
-    removeSuccessMessage();
-  }
-};
-
 // Показ сообщения об успешной отправке
 const showSuccessMessage = () => {
   const successTemplate = document.querySelector('#success');
-  if (!successTemplate) {
-    console.warn('Шаблон #success не найден');
-    return;
-  }
+  if (!successTemplate) return;
 
   const fragment = successTemplate.content.cloneNode(true);
   currentSuccessElement = fragment.firstElementChild;
 
-  if (!currentSuccessElement) {
-    console.warn('Не удалось извлечь элемент из шаблона #success');
-    return;
-  }
+  if (!currentSuccessElement) return;
 
   document.body.appendChild(currentSuccessElement);
 
@@ -65,36 +70,15 @@ const removeErrorMessage = () => {
   }
 };
 
-// Обработчик нажатия клавиш для сообщения ошибки
-const onErrorKeydown = (evt) => {
-  if (isEscapeKey(evt)) {
-    evt.preventDefault();
-    removeErrorMessage();
-  }
-};
-
-// Обработчик клика вне блока сообщения ошибки
-const onErrorClickOutside = (evt) => {
-  if (!currentErrorElement?.contains(evt.target)) {
-    removeErrorMessage();
-  }
-};
-
 // Показ сообщения об ошибке отправки
 const showErrorMessage = (errorMessage) => {
   const errorTemplate = document.querySelector('#error');
-  if (!errorTemplate) {
-    console.warn('Шаблон #error не найден');
-    return;
-  }
+  if (!errorTemplate) return;
 
   const fragment = errorTemplate.content.cloneNode(true);
   currentErrorElement = fragment.firstElementChild;
 
-  if (!currentErrorElement) {
-    console.warn('Не удалось извлечь элемент из шаблона #error');
-    return;
-  }
+  if (!currentErrorElement) return;
 
   // Устанавливаем текст сообщения
   const errorText = currentErrorElement.querySelector('.error__title');
@@ -131,8 +115,6 @@ const sendFormData = async (formData) => {
     }
 
     return await response.json();
-  } catch (error) {
-    throw error;
   } finally {
     // Разблокируем кнопку после завершения запроса
     submitButton.disabled = false;
@@ -177,8 +159,6 @@ const setupEventHandlers = (
         showSuccessMessage();
         onSubmitSuccess(); // Вызываем callback для сброса формы
       } catch (error) {
-        console.error('Ошибка отправки формы:', error);
-        // Показ ошибки — форма остаётся открытой для повторной отправки
         showErrorMessage('Не удалось отправить форму. Проверьте подключение и попробуйте ещё раз.');
       }
     });
