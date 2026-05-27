@@ -43,7 +43,6 @@ const initUploadForm = () => {
     } else {
       // Очищаем поле, если выбран неграфический файл
       fileInput.value = '';
-      
     }
   };
 

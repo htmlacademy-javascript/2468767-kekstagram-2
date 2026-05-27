@@ -62,7 +62,6 @@ const loadThumbsFromServer = async () => {
 document.addEventListener('DOMContentLoaded', () => {
 
   loadThumbsFromServer().catch((error) => {
-    console.error('Не удалось загрузить данные:', error);
     showErrorFromTemplate();
   });
 });
