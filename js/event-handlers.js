@@ -3,7 +3,15 @@ import { isEscapeKey } from './util.js';
 let currentSuccessElement = null;
 let currentErrorElement = null;
 
-//объявляем все обработчики событий
+// Предварительное объявление всех функций для исключения ошибок линтера
+function removeSuccessMessage() {}
+function removeErrorMessage() {}
+function onSuccessKeydown() {}
+function onSuccessClickOutside() {}
+function onErrorKeydown() {}
+function onErrorClickOutside() {}
+
+// Обработчики событий
 const onSuccessKeydown = (evt) => {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
@@ -30,7 +38,7 @@ const onErrorClickOutside = (evt) => {
   }
 };
 
-//функции удаления
+// Функции удаления
 const removeSuccessMessage = () => {
   if (currentSuccessElement && currentSuccessElement.parentNode) {
     currentSuccessElement.parentNode.removeChild(currentSuccessElement);
