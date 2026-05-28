@@ -3,13 +3,40 @@ import { isEscapeKey } from './util.js';
 let currentSuccessElement = null;
 let currentErrorElement = null;
 
-//объявляем функции удаления
+
+// Объект для хранения обработчиков событий
+const eventHandlers = {
+  onSuccessKeydown: (evt) => {
+    if (isEscapeKey(evt)) {
+      evt.preventDefault();
+      removeSuccessMessage();
+    }
+  },
+  onSuccessClickOutside: (evt) => {
+    if (!currentSuccessElement?.contains(evt.target)) {
+      removeSuccessMessage();
+    }
+  },
+  onErrorKeydown: (evt) => {
+    if (isEscapeKey(evt)) {
+      evt.preventDefault();
+      removeErrorMessage();
+    }
+  },
+  onErrorClickOutside: (evt) => {
+    if (!currentErrorElement?.contains(evt.target)) {
+      removeErrorMessage();
+    }
+  }
+};
+
+// Функции удаления — используют обработчики из объекта
 const removeSuccessMessage = () => {
   if (currentSuccessElement && currentSuccessElement.parentNode) {
     currentSuccessElement.parentNode.removeChild(currentSuccessElement);
     currentSuccessElement = null;
-    document.removeEventListener('keydown', onSuccessKeydown);
-    document.removeEventListener('click', onSuccessClickOutside);
+    document.removeEventListener('keydown', eventHandlers.onSuccessKeydown);
+    document.removeEventListener('click', eventHandlers.onSuccessClickOutside);
   }
 };
 
@@ -17,35 +44,8 @@ const removeErrorMessage = () => {
   if (currentErrorElement && currentErrorElement.parentNode) {
     currentErrorElement.parentNode.removeChild(currentErrorElement);
     currentErrorElement = null;
-    document.removeEventListener('keydown', onErrorKeydown);
-    document.removeEventListener('click', onErrorClickOutside);
-  }
-};
-
-//обработчики событий
-const onSuccessKeydown = (evt) => {
-  if (isEscapeKey(evt)) {
-    evt.preventDefault();
-    removeSuccessMessage();
-  }
-};
-
-const onSuccessClickOutside = (evt) => {
-  if (!currentSuccessElement?.contains(evt.target)) {
-    removeSuccessMessage();
-  }
-};
-
-const onErrorKeydown = (evt) => {
-  if (isEscapeKey(evt)) {
-    evt.preventDefault();
-    removeErrorMessage();
-  }
-};
-
-const onErrorClickOutside = (evt) => {
-  if (!currentErrorElement?.contains(evt.target)) {
-    removeErrorMessage();
+    document.removeEventListener('keydown', eventHandlers.onErrorKeydown);
+    document.removeEventListener('click', eventHandlers.onErrorClickOutside);
   }
 };
 
@@ -70,8 +70,8 @@ const showSuccessMessage = () => {
     successButton.addEventListener('click', removeSuccessMessage);
   }
 
-  document.addEventListener('keydown', onSuccessKeydown);
-  document.addEventListener('click', onSuccessClickOutside);
+  document.addEventListener('keydown', eventHandlers.onSuccessKeydown);
+  document.addEventListener('click', eventHandlers.onSuccessClickOutside);
 };
 
 // Показ сообщения об ошибке отправки
@@ -101,8 +101,8 @@ const showErrorMessage = (errorMessage) => {
     errorButton.addEventListener('click', removeErrorMessage);
   }
 
-  document.addEventListener('keydown', onErrorKeydown);
-  document.addEventListener('click', onErrorClickOutside);
+  document.addEventListener('keydown', eventHandlers.onErrorKeydown);
+  document.addEventListener('click', eventHandlers.onErrorClickOutside);
 };
 
 const sendFormData = async (formData) => {
