@@ -3,8 +3,26 @@ import { isEscapeKey } from './util.js';
 let currentSuccessElement = null;
 let currentErrorElement = null;
 
+// Сначала объявляем функции удаления
+const removeSuccessMessage = () => {
+  if (currentSuccessElement && currentSuccessElement.parentNode) {
+    currentSuccessElement.parentNode.removeChild(currentSuccessElement);
+    currentSuccessElement = null;
+    document.removeEventListener('keydown', eventHandlers.onSuccessKeydown);
+    document.removeEventListener('click', eventHandlers.onSuccessClickOutside);
+  }
+};
 
-// Объект для хранения обработчиков событий
+const removeErrorMessage = () => {
+  if (currentErrorElement && currentErrorElement.parentNode) {
+    currentErrorElement.parentNode.removeChild(currentErrorElement);
+    currentErrorElement = null;
+    document.removeEventListener('keydown', eventHandlers.onErrorKeydown);
+    document.removeEventListener('click', eventHandlers.onErrorClickOutside);
+  }
+};
+
+// Теперь объявляем объект с обработчиками событий
 const eventHandlers = {
   onSuccessKeydown: (evt) => {
     if (isEscapeKey(evt)) {
@@ -27,25 +45,6 @@ const eventHandlers = {
     if (!currentErrorElement?.contains(evt.target)) {
       removeErrorMessage();
     }
-  }
-};
-
-// Функции удаления — используют обработчики из объекта
-const removeSuccessMessage = () => {
-  if (currentSuccessElement && currentSuccessElement.parentNode) {
-    currentSuccessElement.parentNode.removeChild(currentSuccessElement);
-    currentSuccessElement = null;
-    document.removeEventListener('keydown', eventHandlers.onSuccessKeydown);
-    document.removeEventListener('click', eventHandlers.onSuccessClickOutside);
-  }
-};
-
-const removeErrorMessage = () => {
-  if (currentErrorElement && currentErrorElement.parentNode) {
-    currentErrorElement.parentNode.removeChild(currentErrorElement);
-    currentErrorElement = null;
-    document.removeEventListener('keydown', eventHandlers.onErrorKeydown);
-    document.removeEventListener('click', eventHandlers.onErrorClickOutside);
   }
 };
 
