@@ -3,7 +3,7 @@ import { isEscapeKey } from './util.js';
 let currentSuccessElement = null;
 let currentErrorElement = null;
 
-// все обработчики событий
+//объявляем все обработчики событий
 const onSuccessKeydown = (evt) => {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
@@ -30,7 +30,7 @@ const onErrorClickOutside = (evt) => {
   }
 };
 
-//функции удаления 
+//функции удаления
 const removeSuccessMessage = () => {
   if (currentSuccessElement && currentSuccessElement.parentNode) {
     currentSuccessElement.parentNode.removeChild(currentSuccessElement);
