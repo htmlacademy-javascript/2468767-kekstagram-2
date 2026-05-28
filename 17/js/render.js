@@ -61,7 +61,7 @@ const loadThumbsFromServer = async () => {
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  loadThumbsFromServer().catch((error) => {
+  loadThumbsFromServer().catch(() => {
     showErrorFromTemplate();
   });
 });

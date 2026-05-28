@@ -3,7 +3,22 @@ import { isEscapeKey } from './util.js';
 let currentSuccessElement = null;
 let currentErrorElement = null;
 
-// Сначала объявляем все обработчики событий
+//простые функции удаления (не вызывают обработчики)
+const removeSuccessMessage = () => {
+  if (currentSuccessElement && currentSuccessElement.parentNode) {
+    currentSuccessElement.parentNode.removeChild(currentSuccessElement);
+    currentSuccessElement = null;
+  }
+};
+
+const removeErrorMessage = () => {
+  if (currentErrorElement && currentErrorElement.parentNode) {
+    currentErrorElement.parentNode.removeChild(currentErrorElement);
+    currentErrorElement = null;
+  }
+};
+
+//обработчики событий (используют уже объявленные функции удаления)
 const onSuccessKeydown = (evt) => {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
@@ -30,26 +45,28 @@ const onErrorClickOutside = (evt) => {
   }
 };
 
-// Теперь объявляем функции удаления — они используют уже объявленные обработчики
-const removeSuccessMessage = () => {
-  if (currentSuccessElement && currentSuccessElement.parentNode) {
-    currentSuccessElement.parentNode.removeChild(currentSuccessElement);
-    currentSuccessElement = null;
-    document.removeEventListener('keydown', onSuccessKeydown);
-    document.removeEventListener('click', onSuccessClickOutside);
-  }
+//используем обработчики и функции удаления
+const addSuccessEventListeners = () => {
+  document.addEventListener('keydown', onSuccessKeydown);
+  document.addEventListener('click', onSuccessClickOutside);
 };
 
-const removeErrorMessage = () => {
-  if (currentErrorElement && currentErrorElement.parentNode) {
-    currentErrorElement.parentNode.removeChild(currentErrorElement);
-    currentErrorElement = null;
-    document.removeEventListener('keydown', onErrorKeydown);
-    document.removeEventListener('click', onErrorClickOutside);
-  }
+const removeSuccessEventListeners = () => {
+  document.removeEventListener('keydown', onSuccessKeydown);
+  document.removeEventListener('click', onSuccessClickOutside);
 };
 
-// Показ сообщения об успешной отправке
+const addErrorEventListeners = () => {
+  document.addEventListener('keydown', onErrorKeydown);
+  document.addEventListener('click', onErrorClickOutside);
+};
+
+const removeErrorEventListeners = () => {
+  document.removeEventListener('keydown', onErrorKeydown);
+  document.removeEventListener('click', onErrorClickOutside);
+};
+
+//Теперь — функции показа сообщений (используют всё выше объявленное)
 const showSuccessMessage = () => {
   const successTemplate = document.querySelector('#success');
   if (!successTemplate) {
@@ -67,14 +84,15 @@ const showSuccessMessage = () => {
 
   const successButton = currentSuccessElement.querySelector('.success__button');
   if (successButton) {
-    successButton.addEventListener('click', removeSuccessMessage);
+    successButton.addEventListener('click', () => {
+      removeSuccessMessage();
+      removeSuccessEventListeners();
+    });
   }
 
-  document.addEventListener('keydown', onSuccessKeydown);
-  document.addEventListener('click', onSuccessClickOutside);
+  addSuccessEventListeners();
 };
 
-// Показ сообщения об ошибке отправки
 const showErrorMessage = (errorMessage) => {
   const errorTemplate = document.querySelector('#error');
   if (!errorTemplate) {
@@ -98,13 +116,16 @@ const showErrorMessage = (errorMessage) => {
 
   const errorButton = currentErrorElement.querySelector('.error__button');
   if (errorButton) {
-    errorButton.addEventListener('click', removeErrorMessage);
+    errorButton.addEventListener('click', () => {
+      removeErrorMessage();
+      removeErrorEventListeners();
+    });
   }
 
-  document.addEventListener('keydown', onErrorKeydown);
-  document.addEventListener('click', onErrorClickOutside);
+  addErrorEventListeners();
 };
 
+// 5. Остальные функции (используют только базовые операции)
 const sendFormData = async (formData) => {
   const submitButton = document.querySelector('.img-upload__submit');
 
