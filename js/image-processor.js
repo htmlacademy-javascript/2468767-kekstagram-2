@@ -13,15 +13,21 @@ import {
 } from './dom.js';
 import { SCALE, EFFECTS, DEFAULT_EFFECT } from './data.js';
 
+// Храним текущие настройки эффекта
+let currentEffectSettings = {
+  effect: 'none',
+  level: 0
+};
+
 // Получает текущий выбранный эффект
 const getCurrentEffect = () => {
   const effectsList = getEffectsList();
   if (!effectsList) {
-    return DEFAULT_EFFECT;
+    return currentEffectSettings.effect;
   }
 
   const activeEffect = effectsList.querySelector('.effects__radio:checked');
-  return activeEffect ? activeEffect.value : DEFAULT_EFFECT;
+  return activeEffect ? activeEffect.value : currentEffectSettings.effect;
 };
 
 // Применяет масштабирование к изображению
@@ -56,7 +62,7 @@ const applyEffectToImage = (effect, value) => {
     return;
   }
   const effectConfig = EFFECTS[effect];
-  if (effect === 'none' || !effectConfig.filter) {
+  if (effect === 'none' || !effectConfig?.filter) {
     previewImage.style.filter = 'none';
     return;
   }
@@ -85,20 +91,22 @@ const getOrCreateHiddenInput = (name, value) => {
 const updateEffectFormFields = (effect, level) => {
   getOrCreateHiddenInput('effect', effect);
   getOrCreateHiddenInput('effect-level', level);
+  // Сохраняем текущие настройки
+  currentEffectSettings = { effect, level };
 };
 
 // Создаёт слайдер уровня эффекта с заданными настройками
 const createEffectSlider = (slider, effect) => {
   noUiSlider.create(slider, {
-    start: [EFFECTS[effect].max], // начинаем с максимальной насыщенности
+    start: [effect === 'none' ? 0 : EFFECTS[effect].min],
     connect: 'lower',
     range: {
-      min: EFFECTS[effect].min,
-      max: EFFECTS[effect].max
+      min: effect === 'none' ? 0 : EFFECTS[effect].min,
+      max: effect === 'none' ? 0 : EFFECTS[effect].max
     },
-    step: EFFECTS[effect].step,
+    step: effect === 'none' ? 1 : EFFECTS[effect].step,
     format: {
-      to: (value) => Math.round(value * 100) / 100, // округление до 2 знаков
+      to: (value) => Math.round(value * 100) / 100,
       from: (value) => parseFloat(value)
     }
   });
@@ -114,7 +122,7 @@ const setupSliderEventListeners = (slider) => {
     // Обновляем отображение значения
     const valueDisplay = getEffectLevelValue();
     if (valueDisplay) {
-      valueDisplay.textContent = `${value}${effectConfig.unit}`;
+      valueDisplay.textContent = `${value}${effectConfig?.unit || ''}`;
     }
 
     // Применяем эффект
@@ -131,8 +139,6 @@ const initEffectSlider = () => {
   const container = getEffectLevelContainer();
 
   if (!slider || !container) {
-    // eslint-disable-next-line no-console
-    console.warn('Элементы слайдера эффекта не найдены');
     return;
   }
 
@@ -140,14 +146,13 @@ const initEffectSlider = () => {
     // Скрываем контейнер слайдера по умолчанию
     container.classList.add('hidden');
 
-    // Создаём слайдер с настройками по умолчанию (максимальная насыщенность)
-    createEffectSlider(slider, DEFAULT_EFFECT);
+    // Создаём слайдер с настройками для 'none'
+    createEffectSlider(slider, 'none');
 
     // Настраиваем обработчики событий
     setupSliderEventListeners(slider);
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Ошибка инициализации слайдера эффекта:', error);
+    // Обработка ошибок без console.error
   }
 };
 
@@ -157,38 +162,39 @@ const updateEffectSlider = (effect) => {
   const container = getEffectLevelContainer();
   const valueDisplay = getEffectLevelValue();
 
-  if (!slider || !slider.noUiSlider || !container || !valueDisplay) {
+  if (!slider || !container || !valueDisplay) {
     return;
   }
 
-  const effectConfig = EFFECTS[effect];
+  // Удаляем старый слайдер, если он существует
+  if (slider.noUiSlider) {
+    slider.noUiSlider.destroy();
+  }
 
   if (effect === 'none') {
     // Скрываем слайдер для эффекта 'none'
     container.classList.add('hidden');
-    getPreviewImage().style.filter = 'none';
-    updateEffectFormFields('none', 0); // отправляем уровень 0 для «Оригинал»
+    const previewImage = getPreviewImage();
+    if (previewImage) {
+      previewImage.style.filter = 'none';
+    }
+    updateEffectFormFields('none', 0);
   } else {
-    //Обновляем настройки слайдера — теперь start равен max
-    slider.noUiSlider.updateOptions({
-      range: { min: effectConfig.min, max: effectConfig.max },
-      step: effectConfig.step,
-      start: [effectConfig.max]
-    });
-
+    const effectConfig = EFFECTS[effect];
+    // Создаём новый слайдер с настройками для текущего эффекта
+    createEffectSlider(slider, effect);
     // Показываем контейнер и обновляем отображение
     container.classList.remove('hidden');
     valueDisplay.textContent = `${effectConfig.max}${effectConfig.unit}`;
 
     // Применяем эффект с максимальной насыщенностью
     applyEffectToImage(effect, effectConfig.max);
-
-    // Обновляем поля формы с максимальной насыщенностью
+    // Обновляем поля формы
     updateEffectFormFields(effect, effectConfig.max);
   }
 };
 
-// Сброс масштаба к 100 %
+// Сброс масштаба к 100 %
 const resetScale = () => {
   updateScale(SCALE.DEFAULT_VALUE);
 };
@@ -196,7 +202,7 @@ const resetScale = () => {
 // Сброс эффекта на «Оригинал»
 const resetEffect = () => {
   const effectsList = getEffectsList();
-  if (!effectsList){
+  if (!effectsList) {
     return;
   }
 
@@ -206,10 +212,13 @@ const resetEffect = () => {
     button.checked = false;
   });
 
-  // Выбираем эффект «none»
+  // Выбираем эффект «none» и триггер события изменения
   const originalEffectButton = effectsList.querySelector('#effect-none');
   if (originalEffectButton) {
     originalEffectButton.checked = true;
+    originalEffectButton.dispatchEvent(new Event('change', {
+      bubbles: true
+    }));
   }
 
   // Обновляем слайдер
@@ -240,33 +249,34 @@ const initScaleControls = () => {
   applyScaleToImage(SCALE.DEFAULT_VALUE);
 
   // Обработчик для кнопки уменьшения масштаба
-  if (smallerButton) {
-    smallerButton.addEventListener('click', () => {
-      const currentValue = parseInt(valueField.value, 10);
-      updateScale(currentValue - SCALE.STEP);
-    });
-  }
+if (smallerButton) {
+  smallerButton.addEventListener('click', () => {
+    const currentValue = parseInt(valueField.value, 10);
+    updateScale(currentValue - SCALE.STEP);
+  });
+}
 
-  // Обработчик для кнопки увеличения масштаба
-  if (biggerButton) {
-    biggerButton.addEventListener('click', () => {
-      const currentValue = parseInt(valueField.value, 10);
-      updateScale(currentValue + SCALE.STEP);
-    });
-  }
+// Обработчик для кнопки увеличения масштаба
+if (biggerButton) {
+  biggerButton.addEventListener('click', () => {
+    const currentValue = parseInt(valueField.value, 10);
+    updateScale(currentValue + SCALE.STEP);
+  });
+}
 
-  // Инициализируем слайдер эффектов
-  initEffectSlider();
+// Инициализируем слайдер эффектов
+initEffectSlider();
 
-  // Инициализируем управление эффектами
-  initEffectsControls();
+// Инициализируем управление эффектами
+initEffectsControls();
 
-  // Устанавливаем эффект по умолчанию
-  updateEffectSlider(DEFAULT_EFFECT);
+// Устанавливаем эффект по умолчанию
+updateEffectSlider(DEFAULT_EFFECT);
 };
+
 // Полный сброс состояния формы редактирования изображения
 const resetImageFormState = () => {
-  // 1. Сброс масштаба к 100 %
+  // 1. Сброс масштаба к 100 %
   resetScale();
 
   // 2. Сброс эффекта на «Оригинал»
@@ -292,8 +302,11 @@ const resetImageFormState = () => {
   const previewImage = getPreviewImage();
   if (previewImage) {
     previewImage.src = 'img/upload-default-image.jpg';
+    // Также сбрасываем стили трансформации и фильтра
+    previewImage.style.transform = 'scale(1)';
+    previewImage.style.filter = 'none';
   }
 };
 
-export { initScaleControls, resetImageFormState };
-
+// Экспортируем необходимые функции
+export {initScaleControls, resetImageFormState};
