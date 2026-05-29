@@ -22,16 +22,15 @@ let currentEffectSettings = {
 // Получает текущий выбранный эффект
 const getCurrentEffect = () => {
   const effectsList = getEffectsList();
-  if (!effectsList) {
-    return currentEffectSettings.effect;
+  if (!effectsList) return currentEffectSettings.effect;
+
+  // Приоритет: сначала проверяем активную кнопку в DOM
+  const activeButton = effectsList.querySelector('.effects__radio:checked');
+  if (activeButton) {
+    return activeButton.value;
   }
 
-  // Сначала проверяем активную кнопку в DOM
-  const activeEffect = effectsList.querySelector('.effects__radio:checked');
-  if (activeEffect) {
-    return activeEffect.value;
-  }
-  // Если ничего не выбрано, возвращаем сохранённое значение
+  // Если ничего не выбрано в DOM, используем сохранённое состояние
   return currentEffectSettings.effect;
 };
 
@@ -165,40 +164,29 @@ const updateEffectSlider = (effect) => {
   const slider = getEffectLevelSlider();
   const container = getEffectLevelContainer();
   const valueDisplay = getEffectLevelValue();
-
-  if (!slider || !container || !valueDisplay) {
-    return;
-  }
-
-  // Всегда сбрасываем фильтр перед изменениями
   const previewImage = getPreviewImage();
-  if (previewImage) {
-    previewImage.style.filter = 'none';
-  }
 
-  // Удаляем старый слайдер, если он существует
+  if (!slider || !container || !valueDisplay) return;
+
+  // Явный сброс фильтра перед любыми изменениями
+  if (previewImage) previewImage.style.filter = 'none';
+
+  // Уничтожаем старый слайдер, если существует
   if (slider.noUiSlider) {
     slider.noUiSlider.destroy();
   }
 
   if (effect === 'none') {
-    // Скрываем слайдер для эффекта 'none'
     container.classList.add('hidden');
-    if (previewImage) {
-      previewImage.style.filter = 'none';
-    }
+    valueDisplay.textContent = '0';
+    if (previewImage) previewImage.style.filter = 'none';
     updateEffectFormFields('none', 0);
   } else {
     const effectConfig = EFFECTS[effect];
-    // Создаём новый слайдер с настройками для текущего эффекта
     createEffectSlider(slider, effect);
-    // Показываем контейнер и обновляем отображение
     container.classList.remove('hidden');
     valueDisplay.textContent = `${effectConfig.max}${effectConfig.unit}`;
-
-    // Применяем эффект с максимальной насыщенностью
     applyEffectToImage(effect, effectConfig.max);
-    // Обновляем поля формы
     updateEffectFormFields(effect, effectConfig.max);
   }
 };
@@ -211,28 +199,29 @@ const resetScale = () => {
 // Сброс эффекта на «Оригинал»
 const resetEffect = () => {
   const effectsList = getEffectsList();
-  if (!effectsList) {
-    return;
-  }
+  if (!effectsList) return;
 
-  const originalEffectButton = effectsList.querySelector('#effect-none');
-  if (originalEffectButton) {
-    // Сбрасываем все кнопки
-    const effectButtons = effectsList.querySelectorAll('.effects__radio');
-    effectButtons.forEach((button) => {
-      button.checked = false;
+  const originalButton = effectsList.querySelector('#effect-none');
+  if (originalButton) {
+    // Обязательно снимаем выделение со всех кнопок
+    const allButtons = effectsList.querySelectorAll('.effects__radio');
+    allButtons.forEach(btn => {
+      btn.checked = false;
     });
 
-    // Устанавливаем 'none' и триггер события
-    originalEffectButton.checked = true;
-    originalEffectButton.dispatchEvent(new Event('change', {
-      bubbles: true
-    }));
-  }
+    // Устанавливаем и активируем кнопку 'none'
+    originalButton.checked = true;
 
-  //обновляем слайдер
-  updateEffectSlider('none');
+    // Триггер события change для гарантированного срабатывания
+    originalButton.dispatchEvent(new Event('change', { bubbles: true }));
+
+    // Явно обновляем слайдер и состояние
+    updateEffectSlider('none');
+    applyEffectToImage('none', 0);
+    updateEffectFormFields('none', 0);
+  }
 };
+
 
 // Обработчик смены эффекта
 const initEffectsControls = () => {
