@@ -65,10 +65,32 @@ const applyEffectToImage = (effect, value) => {
   previewImage.style.filter = `${effectConfig.filter}(${value}${unit})`;
 };
 
+// Получает или создаёт скрытое поле для эффекта
+const getOrCreateHiddenInput = (name, value) => {
+  let input = document.querySelector(`input[name="${name}"]`);
+  if (!input) {
+    input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = name;
+    const form = document.querySelector('.img-upload__form');
+    if (form) {
+      form.appendChild(input);
+    }
+  }
+  input.value = value;
+  return input;
+};
+
+// Обновляет скрытые поля формы с данными об эффекте
+const updateEffectFormFields = (effect, level) => {
+  getOrCreateHiddenInput('effect', effect);
+  getOrCreateHiddenInput('effect-level', level);
+};
+
 // Создаёт слайдер уровня эффекта с заданными настройками
 const createEffectSlider = (slider, effect) => {
   noUiSlider.create(slider, {
-    start: [EFFECTS[effect].min],
+    start: [EFFECTS[effect].max], // начинаем с максимальной насыщенности
     connect: 'lower',
     range: {
       min: EFFECTS[effect].min,
@@ -97,6 +119,9 @@ const setupSliderEventListeners = (slider) => {
 
     // Применяем эффект
     applyEffectToImage(currentEffect, value);
+
+    // Обновляем скрытые поля формы при изменении уровня эффекта
+    updateEffectFormFields(currentEffect, value);
   });
 };
 
@@ -115,7 +140,7 @@ const initEffectSlider = () => {
     // Скрываем контейнер слайдера по умолчанию
     container.classList.add('hidden');
 
-    // Создаём слайдер с настройками по умолчанию
+    // Создаём слайдер с настройками по умолчанию (максимальная насыщенность)
     createEffectSlider(slider, DEFAULT_EFFECT);
 
     // Настраиваем обработчики событий
@@ -142,20 +167,24 @@ const updateEffectSlider = (effect) => {
     // Скрываем слайдер для эффекта 'none'
     container.classList.add('hidden');
     getPreviewImage().style.filter = 'none';
+    updateEffectFormFields('none', 0); // отправляем уровень 0 для «Оригинал»
   } else {
-    // Обновляем настройки слайдера
+    //Обновляем настройки слайдера — теперь start равен max
     slider.noUiSlider.updateOptions({
       range: { min: effectConfig.min, max: effectConfig.max },
       step: effectConfig.step,
-      start: [effectConfig.min]
+      start: [effectConfig.max]
     });
 
     // Показываем контейнер и обновляем отображение
     container.classList.remove('hidden');
-    valueDisplay.textContent = `${effectConfig.min}${effectConfig.unit}`;
+    valueDisplay.textContent = `${effectConfig.max}${effectConfig.unit}`;
 
-    // Применяем начальный эффект
-    applyEffectToImage(effect, effectConfig.min);
+    // Применяем эффект с максимальной насыщенностью
+    applyEffectToImage(effect, effectConfig.max);
+
+    // Обновляем поля формы с максимальной насыщенностью
+    updateEffectFormFields(effect, effectConfig.max);
   }
 };
 

@@ -1,9 +1,10 @@
 import { isEscapeKey } from './util.js';
+import { sendFormData } from './api.js';
 
 let currentSuccessElement = null;
 let currentErrorElement = null;
 
-//простые функции удаления (не вызывают обработчики)
+// Простые функции удаления (не вызывают обработчики)
 const removeSuccessMessage = () => {
   if (currentSuccessElement && currentSuccessElement.parentNode) {
     currentSuccessElement.parentNode.removeChild(currentSuccessElement);
@@ -18,7 +19,7 @@ const removeErrorMessage = () => {
   }
 };
 
-//обработчики событий (используют уже объявленные функции удаления)
+// Обработчики событий (используют уже объявленные функции удаления)
 const onSuccessKeydown = (evt) => {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
@@ -45,7 +46,7 @@ const onErrorClickOutside = (evt) => {
   }
 };
 
-//используем обработчики и функции удаления
+// Используем обработчики и функции удаления
 const addSuccessEventListeners = () => {
   document.addEventListener('keydown', onSuccessKeydown);
   document.addEventListener('click', onSuccessClickOutside);
@@ -66,7 +67,7 @@ const removeErrorEventListeners = () => {
   document.removeEventListener('click', onErrorClickOutside);
 };
 
-//Теперь — функции показа сообщений (используют всё выше объявленное)
+// Функции показа сообщений (используют всё выше объявленное)
 const showSuccessMessage = () => {
   const successTemplate = document.querySelector('#success');
   if (!successTemplate) {
@@ -125,32 +126,7 @@ const showErrorMessage = (errorMessage) => {
   addErrorEventListeners();
 };
 
-// 5. Остальные функции (используют только базовые операции)
-const sendFormData = async (formData) => {
-  const submitButton = document.querySelector('.img-upload__submit');
-
-  try {
-    // Блокируем кнопку отправки
-    submitButton.disabled = true;
-    submitButton.textContent = 'Отправка...';
-
-    const response = await fetch('https://31.javascript.htmlacademy.pro/kekstagram', {
-      method: 'POST',
-      body: formData
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    return await response.json();
-  } finally {
-    // Разблокируем кнопку после завершения запроса
-    submitButton.disabled = false;
-    submitButton.textContent = 'Отправить';
-  }
-};
-
+//Настраивает все обработчики событий для формы загрузки
 const setupEventHandlers = (
   fileInput,
   cancelButton,
@@ -181,7 +157,7 @@ const setupEventHandlers = (
       }
 
       try {
-        // Отправляем данные на сервер
+        // Отправляем данные на сервер через API-модуль
         await sendFormData(new FormData(uploadForm));
 
         // Показ успеха и закрытие формы с сбросом
