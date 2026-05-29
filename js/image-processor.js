@@ -146,16 +146,14 @@ const initEffectSlider = () => {
     // Скрываем контейнер слайдера по умолчанию
     container.classList.add('hidden');
 
-    // Создаём слайдер с настройками для 'none'
+    // Создаём слайдер с настройками для 'none' — старт 0
     createEffectSlider(slider, 'none');
 
     // Настраиваем обработчики событий
     setupSliderEventListeners(slider);
   } catch (error) {
-    // Обработка ошибок без console.error
   }
 };
-
 // Обновляет слайдер при смене эффекта
 const updateEffectSlider = (effect) => {
   const slider = getEffectLevelSlider();
@@ -181,7 +179,7 @@ const updateEffectSlider = (effect) => {
     updateEffectFormFields('none', 0);
   } else {
     const effectConfig = EFFECTS[effect];
-    // Создаём новый слайдер с настройками для текущего эффекта
+    // Создаём новый слайдер с настройками для текущего эффекта — старт с max
     createEffectSlider(slider, effect);
     // Показываем контейнер и обновляем отображение
     container.classList.remove('hidden');
