@@ -13,23 +13,6 @@ import {
 } from './dom.js';
 import { SCALE, EFFECTS, DEFAULT_EFFECT } from './data.js';
 
-// Функция отладки — доступна всем функциям файла
-const debugEffectState = () => {
-  const effectsList = getEffectsList();
-  const previewImage = getPreviewImage();
-
-  console.log('=== DEBUG EFFECT STATE ===');
-  console.log('Current effect (getCurrentEffect):', getCurrentEffect());
-  console.log('currentEffectSettings:', currentEffectSettings);
-  console.log('Active radio button:',
-    effectsList?.querySelector('.effects__radio:checked')?.value);
-  console.log('Preview image filter:', previewImage?.style.filter);
-  console.log('Slider exists:', !!getEffectLevelSlider().noUiSlider);
-  console.log('Slider container visible:',
-    !getEffectLevelContainer().classList.contains('hidden'));
-  console.log('========================');
-};
-
 // Храним текущие настройки эффекта
 let currentEffectSettings = {
   effect: 'none',
