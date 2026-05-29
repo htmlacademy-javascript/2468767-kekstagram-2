@@ -155,7 +155,7 @@ const initEffectSlider = () => {
     // Настраиваем обработчики событий
     setupSliderEventListeners(slider);
   } catch (error) {
-    // Обработка ошибок без console.error
+
   }
 };
 
