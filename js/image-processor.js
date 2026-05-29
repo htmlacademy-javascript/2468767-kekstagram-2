@@ -98,7 +98,7 @@ const updateEffectFormFields = (effect, level) => {
 // Создаёт слайдер уровня эффекта с заданными настройками
 const createEffectSlider = (slider, effect) => {
   noUiSlider.create(slider, {
-    start: [effect === 'none' ? 0 : EFFECTS[effect].min],
+    start: [effect === 'none' ? 0 : EFFECTS[effect].max],
     connect: 'lower',
     range: {
       min: effect === 'none' ? 0 : EFFECTS[effect].min,
