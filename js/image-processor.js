@@ -248,22 +248,16 @@ const initScaleControls = () => {
       updateScale(currentValue + SCALE.STEP);
     });
   }
+  // Устанавливаем эффект по умолчанию в сохранённом состоянии
   currentEffectSettings = { effect: DEFAULT_EFFECT, level: EFFECTS[DEFAULT_EFFECT]?.max || 0 };
   // Инициализируем слайдер с эффектом по умолчанию
   updateEffectSlider(DEFAULT_EFFECT);
-// Устанавливаем эффект по умолчанию в сохранённом состоянии
-  currentEffectSettings = { effect: DEFAULT_EFFECT, level: EFFECTS[DEFAULT_EFFECT]?.max || 0 };
-  // Инициализируем слайдер с эффектом по умолчанию
-  updateEffectSlider(DEFAULT_EFFECT);
+
   // Инициализируем слайдер эффектов
   initEffectSlider();
 
   // Инициализируем управление эффектами
   initEffectsControls();
-<<<<<<< HEAD
-
-=======
->>>>>>> b0a06ede93aa4851eeb7d62ea94f74ee60098f8b
 };
 
 // Полный сброс состояния формы редактирования изображения
