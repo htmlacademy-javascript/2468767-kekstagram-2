@@ -12,6 +12,7 @@ import {
   getFileInput
 } from './dom.js';
 import { SCALE, EFFECTS, DEFAULT_EFFECT } from './data.js';
+
 // Функция отладки — доступна всем функциям файла
 const debugEffectState = () => {
   const effectsList = getEffectsList();
