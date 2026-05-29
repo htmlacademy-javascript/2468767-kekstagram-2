@@ -62,7 +62,6 @@ const showFiltersBlock = () => {
   const filtersBlock = document.querySelector('.img-filters');
   if (filtersBlock) {
     // Убираем скрывающий класс
-    filtersBlock.classList.remove('hidden');
     filtersBlock.classList.remove('img-filters--inactive');
   }
 };
@@ -80,10 +79,18 @@ const sortByComments = (photos) => {
 
 // Текущий активный фильтр
 let currentFilter = 'default';
+// Данные теперь передаются извне
 let allPhotosData = [];
+//отслеживания загрузки данных
+let isDataLoaded = false;
 
 // Функция применения фильтра
 const applyFilter = () => {
+  if (!isDataLoaded || !allPhotosData.length) {
+    console.warn('Данные не загружены, невозможно применить фильтр');
+    return;
+  }
+
   let filteredPhotos = [];
 
   switch (currentFilter) {
@@ -100,7 +107,7 @@ const applyFilter = () => {
   renderThumbs(filteredPhotos);
 };
 
-//applyFilter с задержкой 500 мс
+//версия applyFilter с задержкой 500 мс
 const debouncedApplyFilter = debounce(applyFilter, 500);
 
 // Обработчик кликов по фильтрам
@@ -119,16 +126,22 @@ const setupFilterHandlers = () => {
       // Обновляем текущий фильтр
       currentFilter = evt.target.id.replace('filter-', '');
 
-      // Применяем фильтр для устранение "дребезга"
+      // Применяем фильтр устранения "дребезга"
       debouncedApplyFilter();
     });
   });
 
-  //активируем кнопку «По умолчанию»
+  // Изначально активируем кнопку «По умолчанию»
   defaultFilterButton.classList.add('img-filters__button--active');
 };
 
 const loadThumbsFromServer = async () => {
+  // Проверяем, не загружены ли уже данные
+  if (isDataLoaded) {
+    applyFilter();
+    return allPhotosData;
+  }
+
   try {
     const response = await fetch('https://31.javascript.htmlacademy.pro/kekstagram/data');
     if (!response.ok) {
@@ -136,6 +149,8 @@ const loadThumbsFromServer = async () => {
     }
 
     allPhotosData = await response.json();
+    isDataLoaded = true;
+
     applyFilter(); // Рендерим с фильтром по умолчанию
     return allPhotosData;
   } catch (error) {
@@ -143,14 +158,4 @@ const loadThumbsFromServer = async () => {
   }
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-  loadThumbsFromServer()
-    .then(() => {
-      setupFilterHandlers(); // Инициализируем обработчики фильтров после загрузки данных
-    })
-    .catch(() => {
-      showErrorFromTemplate();
-    });
-});
-
-export { renderThumbs, loadThumbsFromServer };
+export { renderThumbs, loadThumbsFromServer, setupFilterHandlers };
