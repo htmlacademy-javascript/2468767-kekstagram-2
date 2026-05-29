@@ -78,4 +78,3 @@ const EFFECTS = {
 const DEFAULT_EFFECT = 'none';
 
 export {NAMES, MESSAGES,SCALE, EFFECTS, DEFAULT_EFFECT};
-
