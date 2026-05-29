@@ -21,19 +21,15 @@ let currentEffectSettings = {
 
 // Получает текущий выбранный эффект
 const getCurrentEffect = () => {
-  const effectsList = getEffectsList();
-  if (!effectsList) return currentEffectSettings.effect;
-
-  // Приоритет: сначала проверяем активную кнопку в DOM
-  const activeButton = effectsList.querySelector('.effects__radio:checked');
-  if (activeButton) {
-    return activeButton.value;
+  if (currentEffectSettings.effect !== 'none') {
+    return currentEffectSettings.effect;
   }
-
-  // Если ничего не выбрано в DOM, используем сохранённое состояние
-  return currentEffectSettings.effect;
+  const effectsList = getEffectsList();
+  if (!effectsList) return 'none';
+  const activeButton = effectsList.querySelector('.effects__radio:checked');
+  if (activeButton) return activeButton.value;
+  return 'none';
 };
-
 // Применяет масштабирование к изображению
 const applyScaleToImage = (scalePercent) => {
   const scaleValue = scalePercent / 100;
@@ -200,29 +196,17 @@ const resetScale = () => {
 const resetEffect = () => {
   const effectsList = getEffectsList();
   if (!effectsList) return;
-
   const originalButton = effectsList.querySelector('#effect-none');
   if (originalButton) {
-    // Обязательно снимаем выделение со всех кнопок
+    currentEffectSettings = { effect: 'none', level: 0 };
     const allButtons = effectsList.querySelectorAll('.effects__radio');
-    allButtons.forEach(btn => {
-      btn.checked = false;
-    });
-
-    // Устанавливаем и активируем кнопку 'none'
+    allButtons.forEach(btn => btn.checked = false);
     originalButton.checked = true;
-
-    // Триггер события change для гарантированного срабатывания
-    originalButton.dispatchEvent(new Event('change', { bubbles: true }));
-
-    // Явно обновляем слайдер и состояние
     updateEffectSlider('none');
     applyEffectToImage('none', 0);
     updateEffectFormFields('none', 0);
   }
 };
-
-
 // Обработчик смены эффекта
 const initEffectsControls = () => {
   const effectsList = getEffectsList();
@@ -264,15 +248,15 @@ const initScaleControls = () => {
       updateScale(currentValue + SCALE.STEP);
     });
   }
-
+// Устанавливаем эффект по умолчанию в сохранённом состоянии
+  currentEffectSettings = { effect: DEFAULT_EFFECT, level: EFFECTS[DEFAULT_EFFECT]?.max || 0 };
+  // Инициализируем слайдер с эффектом по умолчанию
+  updateEffectSlider(DEFAULT_EFFECT);
   // Инициализируем слайдер эффектов
   initEffectSlider();
 
   // Инициализируем управление эффектами
   initEffectsControls();
-
-  // Устанавливаем эффект по умолчанию
-  updateEffectSlider(DEFAULT_EFFECT);
 };
 
 // Полный сброс состояния формы редактирования изображения
