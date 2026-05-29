@@ -15,7 +15,6 @@ const renderThumbs = (thumbsList) => {
   const picturesContainer = document.querySelector('.pictures');
 
   if (!template || !picturesContainer) {
-    console.error('Шаблон или контейнер не найдены');
     return;
   }
 
@@ -76,7 +75,6 @@ let isDataLoaded = false;
 // Функция применения фильтра
 const applyFilter = () => {
   if (!isDataLoaded || !allPhotosData.length) {
-    console.warn('Данные не загружены, невозможно применить фильтр');
     return;
   }
 
@@ -96,14 +94,13 @@ const applyFilter = () => {
   renderThumbs(filteredPhotos);
 };
 
-// Версия applyFilter с задержкой 500 мс
+// Версия applyFilter с задержкой 500 мс
 const debouncedApplyFilter = debounce(applyFilter, 500);
 
 // Обработчик кликов по фильтрам
 const setupFilterHandlers = () => {
   // Ждём, пока блок фильтров станет виден
   if (!showFiltersBlock()) {
-    console.warn('Блок фильтров не найден или не готов');
     return false;
   }
 
@@ -111,14 +108,11 @@ const setupFilterHandlers = () => {
   const defaultFilterButton = document.getElementById('filter-default');
 
   if (!filterButtons.length) {
-    console.error('Кнопки фильтров не найдены в DOM');
     return false;
   }
 
   filterButtons.forEach((button) => {
     button.addEventListener('click', (evt) => {
-      console.log('Клик по фильтру:', evt.target.id);
-
       // Снимаем активный класс со всех кнопок
       filterButtons.forEach((btn) =>
         btn.classList.remove('img-filters__button--active')
@@ -129,7 +123,6 @@ const setupFilterHandlers = () => {
 
       // Обновляем текущий фильтр
       currentFilter = evt.target.id.replace('filter-', '');
-      console.log('Текущий фильтр установлен:', currentFilter);
 
       // Применяем фильтр с устранением «дребезга»
       debouncedApplyFilter();
@@ -139,11 +132,8 @@ const setupFilterHandlers = () => {
   // Изначально активируем кнопку «По умолчанию»
   if (defaultFilterButton) {
     defaultFilterButton.classList.add('img-filters__button--active');
-  } else {
-    console.warn('Кнопка "По умолчанию" не найдена');
   }
 
-  console.log('Обработчики фильтров успешно назначены');
   return true;
 };
 
@@ -161,10 +151,9 @@ const loadThumbsFromServer = async () => {
     isDataLoaded = true;
 
     applyFilter(); // Рендерим с фильтром по умолчанию
-    setupFilterHandlers(); //вызываем после загрузки данных и рендера
+    setupFilterHandlers(); // Вызываем после загрузки данных и рендера
     return allPhotosData;
   } catch (error) {
-    throw new Error('Критическая ошибка загрузки:', error);
     throw new Error(`Критическая ошибка загрузки: ${error.message}`);
   }
 };
