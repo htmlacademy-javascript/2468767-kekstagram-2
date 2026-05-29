@@ -1,15 +1,23 @@
-//функция для показа блока фильтров
+import { getData } from './api.js';
+
+// Функция для показа блока фильтров
 const showFiltersBlock = () => {
   const filtersBlock = document.querySelector('.img-filters');
   if (filtersBlock) {
-    // Убираем скрывающий класс
     filtersBlock.classList.remove('img-filters--inactive');
+    return true;
   }
+  return false;
 };
 
 const renderThumbs = (thumbsList) => {
   const template = document.querySelector('#picture').content.querySelector('a');
   const picturesContainer = document.querySelector('.pictures');
+
+  if (!template || !picturesContainer) {
+    console.error('Шаблон или контейнер не найдены');
+    return;
+  }
 
   picturesContainer.querySelectorAll('.picture').forEach((el) => el.remove());
 
@@ -61,7 +69,6 @@ const sortByComments = (photos) =>
 
 // Текущий активный фильтр
 let currentFilter = 'default';
-// Данные теперь передаются извне
 let allPhotosData = [];
 // Отслеживания загрузки данных
 let isDataLoaded = false;
@@ -69,7 +76,8 @@ let isDataLoaded = false;
 // Функция применения фильтра
 const applyFilter = () => {
   if (!isDataLoaded || !allPhotosData.length) {
-    throw new Error('Данные не загружены, невозможно применить фильтр');
+    console.warn('Данные не загружены, невозможно применить фильтр');
+    return;
   }
 
   let filteredPhotos = [];
@@ -88,53 +96,75 @@ const applyFilter = () => {
   renderThumbs(filteredPhotos);
 };
 
-// Версия applyFilter с задержкой 500мс
+// Версия applyFilter с задержкой 500 мс
 const debouncedApplyFilter = debounce(applyFilter, 500);
 
 // Обработчик кликов по фильтрам
 const setupFilterHandlers = () => {
+  // Ждём, пока блок фильтров станет виден
+  if (!showFiltersBlock()) {
+    console.warn('Блок фильтров не найден или не готов');
+    return false;
+  }
+
   const filterButtons = document.querySelectorAll('.img-filters__button');
   const defaultFilterButton = document.getElementById('filter-default');
 
+  if (!filterButtons.length) {
+    console.error('Кнопки фильтров не найдены в DOM');
+    return false;
+  }
+
   filterButtons.forEach((button) => {
     button.addEventListener('click', (evt) => {
+      console.log('Клик по фильтру:', evt.target.id);
+
       // Снимаем активный класс со всех кнопок
-      filterButtons.forEach((btn) => btn.classList.remove('img-filters__button--active'));
+      filterButtons.forEach((btn) =>
+        btn.classList.remove('img-filters__button--active')
+      );
 
       // Добавляем активный класс к нажатой кнопке
       evt.target.classList.add('img-filters__button--active');
 
       // Обновляем текущий фильтр
       currentFilter = evt.target.id.replace('filter-', '');
+      console.log('Текущий фильтр установлен:', currentFilter);
 
-      // Применяем фильтр устранения «дребезга»
+      // Применяем фильтр с устранением «дребезга»
       debouncedApplyFilter();
     });
   });
 
   // Изначально активируем кнопку «По умолчанию»
-  defaultFilterButton.classList.add('img-filters__button--active');
+  if (defaultFilterButton) {
+    defaultFilterButton.classList.add('img-filters__button--active');
+  } else {
+    console.warn('Кнопка "По умолчанию" не найдена');
+  }
+
+  console.log('Обработчики фильтров успешно назначены');
+  return true;
 };
 
 const loadThumbsFromServer = async () => {
   // Проверяем, не загружены ли уже данные
   if (isDataLoaded) {
     applyFilter();
+    setupFilterHandlers(); // Переподключаем обработчики при повторном вызове
     return allPhotosData;
   }
 
   try {
-    const response = await fetch('https://31.javascript.htmlacademy.pro/kekstagram/data');
-    if (!response.ok) {
-      throw new Error(`Ошибка загрузки данных: ${response.status} ${response.statusText}`);
-    }
-
-    allPhotosData = await response.json();
+    // Используем функцию из API-модуля
+    allPhotosData = await getData('/data');
     isDataLoaded = true;
 
     applyFilter(); // Рендерим с фильтром по умолчанию
+    setupFilterHandlers(); //вызываем после загрузки данных и рендера
     return allPhotosData;
   } catch (error) {
+    throw new Error('Критическая ошибка загрузки:', error);
     throw new Error(`Критическая ошибка загрузки: ${error.message}`);
   }
 };
