@@ -26,8 +26,13 @@ const getCurrentEffect = () => {
     return currentEffectSettings.effect;
   }
 
+  // Сначала проверяем активную кнопку в DOM
   const activeEffect = effectsList.querySelector('.effects__radio:checked');
-  return activeEffect ? activeEffect.value : currentEffectSettings.effect;
+  if (activeEffect) {
+    return activeEffect.value;
+  }
+  // Если ничего не выбрано, возвращаем сохранённое значение
+  return currentEffectSettings.effect;
 };
 
 // Применяет масштабирование к изображению
@@ -94,7 +99,6 @@ const updateEffectFormFields = (effect, level) => {
   // Сохраняем текущие настройки
   currentEffectSettings = { effect, level };
 };
-
 // Создаёт слайдер уровня эффекта с заданными настройками
 const createEffectSlider = (slider, effect) => {
   noUiSlider.create(slider, {
@@ -152,8 +156,10 @@ const initEffectSlider = () => {
     // Настраиваем обработчики событий
     setupSliderEventListeners(slider);
   } catch (error) {
+    // Обработка ошибок без console.error
   }
 };
+
 // Обновляет слайдер при смене эффекта
 const updateEffectSlider = (effect) => {
   const slider = getEffectLevelSlider();
@@ -164,6 +170,12 @@ const updateEffectSlider = (effect) => {
     return;
   }
 
+  // Всегда сбрасываем фильтр перед изменениями
+  const previewImage = getPreviewImage();
+  if (previewImage) {
+    previewImage.style.filter = 'none';
+  }
+
   // Удаляем старый слайдер, если он существует
   if (slider.noUiSlider) {
     slider.noUiSlider.destroy();
@@ -172,14 +184,13 @@ const updateEffectSlider = (effect) => {
   if (effect === 'none') {
     // Скрываем слайдер для эффекта 'none'
     container.classList.add('hidden');
-    const previewImage = getPreviewImage();
     if (previewImage) {
       previewImage.style.filter = 'none';
     }
     updateEffectFormFields('none', 0);
   } else {
     const effectConfig = EFFECTS[effect];
-    // Создаём новый слайдер с настройками для текущего эффекта — старт с max
+    // Создаём новый слайдер с настройками для текущего эффекта
     createEffectSlider(slider, effect);
     // Показываем контейнер и обновляем отображение
     container.classList.remove('hidden');
@@ -204,22 +215,22 @@ const resetEffect = () => {
     return;
   }
 
-  // Сбрасываем все радио‑кнопки эффектов
-  const effectButtons = effectsList.querySelectorAll('.effects__radio');
-  effectButtons.forEach((button) => {
-    button.checked = false;
-  });
-
-  // Выбираем эффект «none» и триггер события изменения
   const originalEffectButton = effectsList.querySelector('#effect-none');
   if (originalEffectButton) {
+    // Сбрасываем все кнопки
+    const effectButtons = effectsList.querySelectorAll('.effects__radio');
+    effectButtons.forEach((button) => {
+      button.checked = false;
+    });
+
+    // Устанавливаем 'none' и триггер события
     originalEffectButton.checked = true;
     originalEffectButton.dispatchEvent(new Event('change', {
       bubbles: true
     }));
   }
 
-  // Обновляем слайдер
+  //обновляем слайдер
   updateEffectSlider('none');
 };
 
@@ -232,7 +243,10 @@ const initEffectsControls = () => {
 
   effectsList.addEventListener('change', (e) => {
     if (e.target.matches('.effects__radio')) {
-      updateEffectSlider(e.target.value);
+      const selectedEffect = e.target.value;
+      // Обновляем состояние перед обновлением слайдера
+      currentEffectSettings.effect = selectedEffect;
+      updateEffectSlider(selectedEffect);
     }
   });
 };
@@ -247,29 +261,29 @@ const initScaleControls = () => {
   applyScaleToImage(SCALE.DEFAULT_VALUE);
 
   // Обработчик для кнопки уменьшения масштаба
-if (smallerButton) {
-  smallerButton.addEventListener('click', () => {
-    const currentValue = parseInt(valueField.value, 10);
-    updateScale(currentValue - SCALE.STEP);
-  });
-}
+  if (smallerButton) {
+    smallerButton.addEventListener('click', () => {
+      const currentValue = parseInt(valueField.value, 10);
+      updateScale(currentValue - SCALE.STEP);
+    });
+  }
 
-// Обработчик для кнопки увеличения масштаба
-if (biggerButton) {
-  biggerButton.addEventListener('click', () => {
-    const currentValue = parseInt(valueField.value, 10);
-    updateScale(currentValue + SCALE.STEP);
-  });
-}
+  // Обработчик для кнопки увеличения масштаба
+  if (biggerButton) {
+    biggerButton.addEventListener('click', () => {
+      const currentValue = parseInt(valueField.value, 10);
+      updateScale(currentValue + SCALE.STEP);
+    });
+  }
 
-// Инициализируем слайдер эффектов
-initEffectSlider();
+  // Инициализируем слайдер эффектов
+  initEffectSlider();
 
-// Инициализируем управление эффектами
-initEffectsControls();
+  // Инициализируем управление эффектами
+  initEffectsControls();
 
-// Устанавливаем эффект по умолчанию
-updateEffectSlider(DEFAULT_EFFECT);
+  // Устанавливаем эффект по умолчанию
+  updateEffectSlider(DEFAULT_EFFECT);
 };
 
 // Полный сброс состояния формы редактирования изображения
@@ -307,4 +321,4 @@ const resetImageFormState = () => {
 };
 
 // Экспортируем необходимые функции
-export {initScaleControls, resetImageFormState};
+export { initScaleControls, resetImageFormState };
