@@ -1,5 +1,7 @@
 import { isEscapeKey } from './util.js';
 import { sendFormData } from './api.js';
+import { getCurrentEffect, getCurrentEffectLevel } from './image-processor.js';
+
 
 let currentSuccessElement = null;
 let currentErrorElement = null;
@@ -157,6 +159,11 @@ const setupEventHandlers = (
       }
 
       try {
+        // Создаём FormData из формы
+        const formData = new FormData(uploadForm);
+        // Добавляем эффект и его уровень
+        formData.append('effect', getCurrentEffect());
+        formData.append('effect-level', getCurrentEffectLevel());
         // Отправляем данные на сервер через API-модуль
         await sendFormData(new FormData(uploadForm));
 

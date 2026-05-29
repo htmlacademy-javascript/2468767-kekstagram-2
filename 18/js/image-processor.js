@@ -13,6 +13,8 @@ getFileInput
 } from './dom.js';
 import { SCALE, EFFECTS, DEFAULT_EFFECT } from './data.js';
 
+let currentEffectLevel = EFFECTS[DEFAULT_EFFECT].min;
+
 // Получает текущий выбранный эффект
 const getCurrentEffect = () => {
 const effectsList = getEffectsList();
@@ -89,6 +91,9 @@ const currentEffect = getCurrentEffect();
 const effectConfig = EFFECTS[currentEffect];
 const value = Number(values[handle]);
 
+// Сохраняем текущий уровень эффекта в переменную
+currentEffectLevel = value;
+
 // Обновляем отображение значения
 const valueDisplay = getEffectLevelValue();
 if (valueDisplay) {
@@ -142,6 +147,7 @@ if (effect === 'none') {
 // Скрываем слайдер для эффекта 'none'
 container.classList.add('hidden');
 getPreviewImage().style.filter = 'none';
+currentEffectLevel = 0;
 } else {
 // Обновляем настройки слайдера
 slider.noUiSlider.updateOptions({
@@ -154,10 +160,14 @@ start: [effectConfig.max]
 container.classList.remove('hidden');
 valueDisplay.textContent = `${effectConfig.max}${effectConfig.unit}`;
 
+currentEffectLevel = effectConfig.max;
 // Применяем начальный эффект
 applyEffectToImage(effect, effectConfig.max);
 }
 };
+
+// Получает текущий уровень эффекта
+const getCurrentEffectLevel = () => currentEffectLevel;
 
 // Сброс масштаба к 100 %
 const resetScale = () => {
@@ -266,4 +276,4 @@ previewImage.src = 'img/upload-default-image.jpg';
 }
 };
 
-export { initScaleControls, resetImageFormState };
+export { initScaleControls, resetImageFormState, getCurrentEffect,getCurrentEffectLevel};
