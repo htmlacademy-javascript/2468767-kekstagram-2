@@ -1,3 +1,12 @@
+//функция для показа блока фильтров
+const showFiltersBlock = () => {
+  const filtersBlock = document.querySelector('.img-filters');
+  if (filtersBlock) {
+    // Убираем скрывающий класс
+    filtersBlock.classList.remove('img-filters--inactive');
+  }
+};
+
 const renderThumbs = (thumbsList) => {
   const template = document.querySelector('#picture').content.querySelector('a');
   const picturesContainer = document.querySelector('.pictures');
@@ -31,39 +40,13 @@ const renderThumbs = (thumbsList) => {
   showFiltersBlock();
 };
 
-const showErrorFromTemplate = () => {
-  const errorTemplate = document.querySelector('#data-error');
-  if (!errorTemplate) {
-    throw new Error('Шаблон #data-error не найден');
-  }
-  const errorElement = errorTemplate.content.cloneNode(true);
-  document.body.appendChild(errorElement);
-  setTimeout(() => {
-    const existingError = document.querySelector('.error-message');
-    if (existingError) {
-      existingError.remove();
-    }
-  }, 5000);
-};
-
 // Функция устранения дребезга
 const debounce = (callback, delay) => {
   let timeoutId;
   return (...args) => {
     clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => {
-      callback.apply(null, args);
-    }, delay);
+    timeoutId = setTimeout(() => callback.apply(null, args), delay);
   };
-};
-
-// Новая функция для показа блока фильтров
-const showFiltersBlock = () => {
-  const filtersBlock = document.querySelector('.img-filters');
-  if (filtersBlock) {
-    // Убираем скрывающий класс
-    filtersBlock.classList.remove('img-filters--inactive');
-  }
 };
 
 // Функция для получения 10 случайных уникальных элементов
@@ -73,22 +56,20 @@ const getRandomPhotos = (photos, count = 10) => {
 };
 
 // Функция сортировки по количеству комментариев (убывание)
-const sortByComments = (photos) => {
-  return [...photos].sort((a, b) => (b.comments?.length || 0) - (a.comments?.length || 0));
-};
+const sortByComments = (photos) =>
+  [...photos].sort((a, b) => (b.comments?.length || 0) - (a.comments?.length || 0));
 
 // Текущий активный фильтр
 let currentFilter = 'default';
 // Данные теперь передаются извне
 let allPhotosData = [];
-//отслеживания загрузки данных
+// Отслеживания загрузки данных
 let isDataLoaded = false;
 
 // Функция применения фильтра
 const applyFilter = () => {
   if (!isDataLoaded || !allPhotosData.length) {
-    console.warn('Данные не загружены, невозможно применить фильтр');
-    return;
+    throw new Error('Данные не загружены, невозможно применить фильтр');
   }
 
   let filteredPhotos = [];
@@ -107,7 +88,7 @@ const applyFilter = () => {
   renderThumbs(filteredPhotos);
 };
 
-//версия applyFilter с задержкой 500 мс
+// Версия applyFilter с задержкой 500 мс
 const debouncedApplyFilter = debounce(applyFilter, 500);
 
 // Обработчик кликов по фильтрам
@@ -115,10 +96,10 @@ const setupFilterHandlers = () => {
   const filterButtons = document.querySelectorAll('.img-filters__button');
   const defaultFilterButton = document.getElementById('filter-default');
 
-  filterButtons.forEach(button => {
+  filterButtons.forEach((button) => {
     button.addEventListener('click', (evt) => {
       // Снимаем активный класс со всех кнопок
-      filterButtons.forEach(btn => btn.classList.remove('img-filters__button--active'));
+      filterButtons.forEach((btn) => btn.classList.remove('img-filters__button--active'));
 
       // Добавляем активный класс к нажатой кнопке
       evt.target.classList.add('img-filters__button--active');
@@ -126,7 +107,7 @@ const setupFilterHandlers = () => {
       // Обновляем текущий фильтр
       currentFilter = evt.target.id.replace('filter-', '');
 
-      // Применяем фильтр устранения "дребезга"
+      // Применяем фильтр устранения «дребезга»
       debouncedApplyFilter();
     });
   });
