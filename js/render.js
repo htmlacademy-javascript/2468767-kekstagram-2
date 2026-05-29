@@ -88,7 +88,7 @@ const applyFilter = () => {
   renderThumbs(filteredPhotos);
 };
 
-// Версия applyFilter с задержкой 500 мс
+// Версия applyFilter с задержкой 500мс
 const debouncedApplyFilter = debounce(applyFilter, 500);
 
 // Обработчик кликов по фильтрам
