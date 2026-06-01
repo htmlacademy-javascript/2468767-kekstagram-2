@@ -53,18 +53,22 @@ applyScaleToImage(clampedValue);
 
 // Применяет CSS‑фильтр к изображению
 const applyEffectToImage = (effect, value) => {
-const previewImage = getPreviewImage();
-if (!previewImage) {
-return;
-}
-const effectConfig = EFFECTS[effect];
-if (effect === 'none' || !effectConfig.filter) {
-previewImage.style.filter = 'none';
-return;
-}
+  const previewImage = getPreviewImage();
+  if (!previewImage) {
+    return;
+  }
 
-const unit = effectConfig.unit || '';
-previewImage.style.filter = `${effectConfig.filter}(${value}${unit})`;
+  const effectConfig = EFFECTS[effect];
+
+  // Если эффект 'none' или нет фильтра в конфигурации — сбрасываем все стили
+  if (effect === 'none' || !effectConfig.filter) {
+    previewImage.style.filter = 'none';
+    return;
+  }
+
+  // Применяем фильтр с уровнем
+  const unit = effectConfig.unit || '';
+  previewImage.style.filter = `${effectConfig.filter}(${value}${unit})`;
 };
 
 // Создаёт слайдер уровня эффекта с заданными настройками
@@ -133,37 +137,38 @@ console.error('Ошибка инициализации слайдера эффе
 
 // Обновляет слайдер при смене эффекта
 const updateEffectSlider = (effect) => {
-const slider = getEffectLevelSlider();
-const container = getEffectLevelContainer();
-const valueDisplay = getEffectLevelValue();
+  const slider = getEffectLevelSlider();
+  const container = getEffectLevelContainer();
+  const valueDisplay = getEffectLevelValue();
 
-if (!slider || !slider.noUiSlider || !container || !valueDisplay) {
-return;
-}
+  if (!slider || !slider.noUiSlider || !container || !valueDisplay) {
+    return;
+  }
 
-const effectConfig = EFFECTS[effect];
+  const effectConfig = EFFECTS[effect];
 
-if (effect === 'none') {
-// Скрываем слайдер для эффекта 'none'
-container.classList.add('hidden');
-getPreviewImage().style.filter = 'none';
-currentEffectLevel = 0;
-} else {
-// Обновляем настройки слайдера
-slider.noUiSlider.updateOptions({
-range: { min: effectConfig.min, max: effectConfig.max },
-step: effectConfig.step,
-start: [effectConfig.max]
-});
+  if (effect === 'none') {
+    // Скрываем слайдер и сбрасываем стили
+    container.classList.add('hidden');
+    previewImage.style.filter = 'none';
+    currentEffectLevel = 0;
+  } else {
+    // Обновляем настройки слайдера
+    slider.noUiSlider.updateOptions({
+      range: { min: effectConfig.min, max: effectConfig.max },
+      step: effectConfig.step,
+      start: [effectConfig.max]
+    });
 
-// Показываем контейнер и обновляем отображение
-container.classList.remove('hidden');
-valueDisplay.textContent = `${effectConfig.max}${effectConfig.unit}`;
+    // Показываем контейнер и обновляем отображение
+    container.classList.remove('hidden');
+    valueDisplay.textContent = `${effectConfig.max}${effectConfig.unit}`;
 
-currentEffectLevel = effectConfig.max;
-// Применяем начальный эффект
-applyEffectToImage(effect, effectConfig.max);
-}
+    currentEffectLevel = effectConfig.max;
+
+    // Применяем эффект с максимальным уровнем (дефолтное значение)
+    applyEffectToImage(effect, effectConfig.max);
+  }
 };
 
 // Получает текущий уровень эффекта
@@ -176,39 +181,39 @@ updateScale(SCALE.DEFAULT_VALUE);
 
 // Сброс эффекта на «Оригинал»
 const resetEffect = () => {
-const effectsList = getEffectsList();
-if (!effectsList){
-return;
-}
+  const effectsList = getEffectsList();
+  if (!effectsList) {
+    return;
+  }
 
-// Сбрасываем все радио‑кнопки эффектов
-const effectButtons = effectsList.querySelectorAll('.effects__radio');
-effectButtons.forEach((button) => {
-button.checked = false;
-});
+  // Сбрасываем все радио‑кнопки эффектов
+  const effectButtons = effectsList.querySelectorAll('.effects__radio');
+  effectButtons.forEach((button) => {
+    button.checked = false;
+  });
 
-// Выбираем эффект «none»
-const originalEffectButton = effectsList.querySelector('#effect-none');
-if (originalEffectButton) {
-originalEffectButton.checked = true;
-}
+  // Выбираем эффект «none»
+  const originalEffectButton = effectsList.querySelector('#effect-none');
+  if (originalEffectButton) {
+    originalEffectButton.checked = true;
+  }
 
-// Обновляем слайдер
-updateEffectSlider('none');
+  // Обновляем слайдер и применяем сброс стилей
+  updateEffectSlider('none');
 };
 
 // Обработчик смены эффекта
 const initEffectsControls = () => {
-const effectsList = getEffectsList();
-if (!effectsList) {
-return;
-}
+  const effectsList = getEffectsList();
+  if (!effectsList) {
+    return;
+  }
 
-effectsList.addEventListener('change', (e) => {
-if (e.target.matches('.effects__radio')) {
-updateEffectSlider(e.target.value);
-}
-});
+  effectsList.addEventListener('change', (e) => {
+    if (e.target.matches('.effects__radio')) {
+      updateEffectSlider(e.target.value); // Передаём название эффекта
+    }
+  });
 };
 
 const initScaleControls = () => {
