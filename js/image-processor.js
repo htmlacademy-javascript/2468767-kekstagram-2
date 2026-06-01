@@ -57,16 +57,12 @@ const previewImage = getPreviewImage();
 if (!previewImage) {
 return;
 }
-
 const effectConfig = EFFECTS[effect];
-
-// Если эффект 'none' или нет фильтра в конфигурации — сбрасываем все стили
 if (effect === 'none' || !effectConfig.filter) {
 previewImage.style.filter = 'none';
 return;
 }
 
-// Применяем фильтр с уровнем
 const unit = effectConfig.unit || '';
 previewImage.style.filter = `${effectConfig.filter}(${value}${unit})`;
 };
@@ -148,9 +144,9 @@ return;
 const effectConfig = EFFECTS[effect];
 
 if (effect === 'none') {
-// Скрываем слайдер и сбрасываем стили
+// Скрываем слайдер для эффекта 'none'
 container.classList.add('hidden');
-previewImage.style.filter = 'none';
+getPreviewImage().style.filter = 'none';
 currentEffectLevel = 0;
 } else {
 // Обновляем настройки слайдера
@@ -165,8 +161,7 @@ container.classList.remove('hidden');
 valueDisplay.textContent = `${effectConfig.max}${effectConfig.unit}`;
 
 currentEffectLevel = effectConfig.max;
-
-// Применяем эффект с максимальным уровнем (дефолтное значение)
+// Применяем начальный эффект
 applyEffectToImage(effect, effectConfig.max);
 }
 };
@@ -182,7 +177,7 @@ updateScale(SCALE.DEFAULT_VALUE);
 // Сброс эффекта на «Оригинал»
 const resetEffect = () => {
 const effectsList = getEffectsList();
-if (!effectsList) {
+if (!effectsList){
 return;
 }
 
@@ -198,7 +193,7 @@ if (originalEffectButton) {
 originalEffectButton.checked = true;
 }
 
-// Обновляем слайдер и применяем сброс стилей
+// Обновляем слайдер
 updateEffectSlider('none');
 };
 
@@ -211,7 +206,7 @@ return;
 
 effectsList.addEventListener('change', (e) => {
 if (e.target.matches('.effects__radio')) {
-updateEffectSlider(e.target.value); // Передаём название эффекта
+updateEffectSlider(e.target.value);
 }
 });
 };
