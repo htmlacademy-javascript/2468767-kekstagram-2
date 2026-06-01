@@ -1,7 +1,5 @@
 import { isEscapeKey } from './util.js';
 import { sendFormData } from './api.js';
-import { getCurrentEffect, getCurrentEffectLevel } from './image-processor.js';
-
 
 let currentSuccessElement = null;
 let currentErrorElement = null;
@@ -151,31 +149,19 @@ const setupEventHandlers = (
 
   // Обработчик отправки формы
   if (uploadForm) {
-  uploadForm.addEventListener('submit', async (evt) => {
-    evt.preventDefault();
+    uploadForm.addEventListener('submit', async (evt) => {
+      evt.preventDefault();
 
-    if (!pristine || !pristine.validate()) {
-      return;
-    }
-
-    try {
-      // Создаём FormData из формы
-      const formData = new FormData(uploadForm);
-
-      // Получаем текущие значения эффекта и его уровня
-      const currentEffect = getCurrentEffect();
-      const currentLevel = getCurrentEffectLevel();
-
-      // Проверяем, что значения корректны
-      if (currentEffect !== undefined && currentLevel !== undefined) {
-        formData.append('effect', currentEffect);
-        formData.append('effect-level', currentLevel.toString());
-      } else {
-        console.warn('Не удалось получить текущий эффект или его уровень');
+      if (!pristine || !pristine.validate()) {
+        return;
       }
 
-      // Отправляем ПОДГОТОВЛЕННЫЙ formData (с добавленными полями)
-      await sendFormData(formData);
+      try {
+         // Создаём FormData из формы 
+        const formData = new FormData(uploadForm);
+
+        // Отправляем данные на сервер через API-модуль
+        await sendFormData(formData);
 
         // Показ успеха и закрытие формы с сбросом
         showSuccessMessage();
