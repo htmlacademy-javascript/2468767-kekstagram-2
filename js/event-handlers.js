@@ -160,12 +160,12 @@ const setupEventHandlers = (
 
       try {
         // Создаём FormData из формы
-    const formData = new FormData(uploadForm);
-    // Добавляем эффект и его уровень
-    formData.append('effect', getCurrentEffect());
-    formData.append('effect-level', getCurrentEffectLevel());
-    // Отправляем данные на сервер через API-модуль
-    await sendFormData(formData); // Передаём изменённый formData
+        const formData = new FormData(uploadForm);
+        // Добавляем эффект и его уровень
+        formData.append('effect', getCurrentEffect());
+        formData.append('effect-level', getCurrentEffectLevel());
+        // Отправляем данные на сервер через API-модуль
+        await sendFormData(new FormData(uploadForm));
 
         // Показ успеха и закрытие формы с сбросом
         showSuccessMessage();
