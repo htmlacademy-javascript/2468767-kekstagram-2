@@ -98,6 +98,7 @@ currentEffectLevel = value;
 const valueDisplay = getEffectLevelValue();
 if (valueDisplay) {
 valueDisplay.textContent = `${value}${effectConfig.unit}`;
+valueDisplay.value = value;
 }
 
 // Применяем эффект
