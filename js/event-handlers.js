@@ -157,7 +157,7 @@ const setupEventHandlers = (
       }
 
       try {
-         // Создаём FormData из формы 
+        // Создаём FormData из формы
         const formData = new FormData(uploadForm);
 
         // Отправляем данные на сервер через API-модуль

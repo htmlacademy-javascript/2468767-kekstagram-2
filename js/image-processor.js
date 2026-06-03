@@ -1,15 +1,15 @@
 import {
-    getScaleSmallerButton,
-    getScaleBiggerButton,
-    getScaleValueField,
-    getPreviewImage,
-    getEffectsList,
-    getEffectLevelSlider,
-    getEffectLevelValue,
-    getEffectLevelContainer,
-    getHashtagsInput,
-    getDescriptionInput,
-    getFileInput
+getScaleSmallerButton,
+getScaleBiggerButton,
+getScaleValueField,
+getPreviewImage,
+getEffectsList,
+getEffectLevelSlider,
+getEffectLevelValue,
+getEffectLevelContainer,
+getHashtagsInput,
+getDescriptionInput,
+getFileInput
 } from './dom.js';
 import { SCALE, EFFECTS, DEFAULT_EFFECT } from './data.js';
 
@@ -17,13 +17,13 @@ let currentEffectLevel = EFFECTS[DEFAULT_EFFECT].min;
 
 // Получает текущий выбранный эффект
 const getCurrentEffect = () => {
-    const effectsList = getEffectsList();
-    if (!effectsList) {
-        return DEFAULT_EFFECT;
-    }
+const effectsList = getEffectsList();
+if (!effectsList) {
+    return DEFAULT_EFFECT;
+}
 
-    const activeEffect = effectsList.querySelector('.effects__radio:checked');
-    return activeEffect ? activeEffect.value : DEFAULT_EFFECT;
+const activeEffect = effectsList.querySelector('.effects__radio:checked');
+return activeEffect ? activeEffect.value : DEFAULT_EFFECT;
 };
 
 // Применяет масштабирование к изображению
