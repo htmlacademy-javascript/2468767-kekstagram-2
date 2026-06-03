@@ -19,7 +19,7 @@ let currentEffectLevel = EFFECTS[DEFAULT_EFFECT].min;
 const getCurrentEffect = () => {
   const effectsList = getEffectsList();
   if (!effectsList) {
-        return DEFAULT_EFFECT;
+    return DEFAULT_EFFECT;
   }
 
   const activeEffect = effectsList.querySelector('.effects__radio:checked');
@@ -60,8 +60,8 @@ const applyEffectToImage = (effect, value) => {
   const effectConfig = EFFECTS[effect];
   if (effect === 'none' || !effectConfig.filter) {
     previewImage.style.filter = 'none';
-  return;
-    }
+    return;
+  }
 
   const unit = effectConfig.unit || '';
   previewImage.style.filter = `${effectConfig.filter}(${value}${unit})`;
@@ -73,13 +73,13 @@ const createEffectSlider = (slider, effect) => {
     start: [EFFECTS[effect].min],
     connect: 'lower',
     range: {
-        min: EFFECTS[effect].min,
-        max: EFFECTS[effect].max
+      min: EFFECTS[effect].min,
+      max: EFFECTS[effect].max
     },
     step: EFFECTS[effect].step,
     format: {
-        to: (value) => Math.round(value * 100) / 100, // округление до 2 знаков
-        from: (value) => parseFloat(value)
+      to: (value) => Math.round(value * 100) / 100, // округление до 2 знаков
+      from: (value) => parseFloat(value)
     }
   });
 };
@@ -97,8 +97,8 @@ const setupSliderEventListeners = (slider) => {
     // Обновляем отображение значения
     const valueDisplay = getEffectLevelValue();
     if (valueDisplay) {
-        valueDisplay.textContent = `${value}${effectConfig.unit}`;
-        valueDisplay.value = value;
+      valueDisplay.textContent = `${value}${effectConfig.unit}`;
+      valueDisplay.value = value;
     }
 
     // Применяем эффект
@@ -172,109 +172,109 @@ const getCurrentEffectLevel = () => currentEffectLevel;
 
 // Сброс масштаба к 100 %
 const resetScale = () => {
-    updateScale(SCALE.DEFAULT_VALUE);
+  updateScale(SCALE.DEFAULT_VALUE);
 };
 
 // Сброс эффекта на «Оригинал»
 const resetEffect = () => {
-    const effectsList = getEffectsList();
-    if (!effectsList) {
-        return;
-    }
+  const effectsList = getEffectsList();
+  if (!effectsList) {
+    return;
+  }
 
-    // Сбрасываем все радио‑кнопки эффектов
-    const effectButtons = effectsList.querySelectorAll('.effects__radio');
-    effectButtons.forEach((button) => {
-        button.checked = false;
-    });
+  // Сбрасываем все радио‑кнопки эффектов
+  const effectButtons = effectsList.querySelectorAll('.effects__radio');
+  effectButtons.forEach((button) => {
+    button.checked = false;
+  });
 
-    // Выбираем эффект «none»
-    const originalEffectButton = effectsList.querySelector('#effect-none');
-    if (originalEffectButton) {
-        originalEffectButton.checked = true;
-    }
+  // Выбираем эффект «none»
+  const originalEffectButton = effectsList.querySelector('#effect-none');
+  if (originalEffectButton) {
+    originalEffectButton.checked = true;
+  }
 
-    // Обновляем слайдер
-    updateEffectSlider('none');
+  // Обновляем слайдер
+  updateEffectSlider('none');
 };
 
 // Обработчик смены эффекта
 const initEffectsControls = () => {
-    const effectsList = getEffectsList();
-    if (!effectsList) {
-        return;
-    }
+  const effectsList = getEffectsList();
+  if (!effectsList) {
+    return;
+  }
 
-    effectsList.addEventListener('change', (e) => {
-        if (e.target.matches('.effects__radio')) {
-            updateEffectSlider(e.target.value);
-        }
-    });
+  effectsList.addEventListener('change', (e) => {
+    if (e.target.matches('.effects__radio')) {
+      updateEffectSlider(e.target.value);
+    }
+  });
 };
 
 const initScaleControls = () => {
-    const smallerButton = getScaleSmallerButton();
-    const biggerButton = getScaleBiggerButton();
-    const valueField = getScaleValueField();
+  const smallerButton = getScaleSmallerButton();
+  const biggerButton = getScaleBiggerButton();
+  const valueField = getScaleValueField();
 
-    // Устанавливаем значение по умолчанию для масштаба
-    valueField.value = `${SCALE.DEFAULT_VALUE}%`;
-    applyScaleToImage(SCALE.DEFAULT_VALUE);
+  // Устанавливаем значение по умолчанию для масштаба
+  valueField.value = `${SCALE.DEFAULT_VALUE}%`;
+  applyScaleToImage(SCALE.DEFAULT_VALUE);
 
-    // Обработчик для кнопки уменьшения масштаба
-    if (smallerButton) {
-        smallerButton.addEventListener('click', () => {
-            const currentValue = parseInt(valueField.value, 10);
-            updateScale(currentValue - SCALE.STEP);
-        });
-    }
+  // Обработчик для кнопки уменьшения масштаба
+  if (smallerButton) {
+    smallerButton.addEventListener('click', () => {
+      const currentValue = parseInt(valueField.value, 10);
+      updateScale(currentValue - SCALE.STEP);
+    });
+  }
 
-    // Обработчик для кнопки увеличения масштаба
-    if (biggerButton) {
-        biggerButton.addEventListener('click', () => {
-            const currentValue = parseInt(valueField.value, 10);
-            updateScale(currentValue + SCALE.STEP);
-        });
-    }
+  // Обработчик для кнопки увеличения масштаба
+  if (biggerButton) {
+    biggerButton.addEventListener('click', () => {
+      const currentValue = parseInt(valueField.value, 10);
+      updateScale(currentValue + SCALE.STEP);
+    });
+  }
 
-    // Инициализируем слайдер эффектов
-    initEffectSlider();
+  // Инициализируем слайдер эффектов
+  initEffectSlider();
 
-    // Инициализируем управление эффектами
-    initEffectsControls();
+  // Инициализируем управление эффектами
+  initEffectsControls();
 
-    // Устанавливаем эффект по умолчанию
-    updateEffectSlider(DEFAULT_EFFECT);
+  // Устанавливаем эффект по умолчанию
+  updateEffectSlider(DEFAULT_EFFECT);
 };
 // Полный сброс состояния формы редактирования изображения
 const resetImageFormState = () => {
-    // 1. Сброс масштаба к 100 %
-    resetScale();
+  // 1. Сброс масштаба к 100 %
+  resetScale();
 
-    // 2. Сброс эффекта на «Оригинал»
-    resetEffect();
+  // 2. Сброс эффекта на «Оригинал»
+  resetEffect();
 
-    // 3. Очистка полей ввода
-    const hashtagsInput = getHashtagsInput();
-    const descriptionInput = getDescriptionInput();
-    if (hashtagsInput) {
-        hashtagsInput.value = '';
-    }
-    if (descriptionInput) {
-        descriptionInput.value = '';
-    }
+  // 3. Очистка полей ввода
+  const hashtagsInput = getHashtagsInput();
+  const descriptionInput = getDescriptionInput();
+  if (hashtagsInput) {
+    hashtagsInput.value = '';
+  }
+  if (descriptionInput) {
+    descriptionInput.value = '';
+  }
 
-    // 4. Очистка поля загрузки фотографии
-    const fileInput = getFileInput();
-    if (fileInput) {
-        fileInput.value = '';
-    }
+  // 4. Очистка поля загрузки фотографии
+  const fileInput = getFileInput();
+  if (fileInput) {
+    fileInput.value = '';
+  }
 
-    // 5. Сброс превью изображения
-    const previewImage = getPreviewImage();
-    if (previewImage) {
-        previewImage.src = 'img/upload-default-image.jpg';
-    }
+  // 5. Сброс превью изображения
+  const previewImage = getPreviewImage();
+  if (previewImage) {
+    previewImage.src = 'img/upload-default-image.jpg';
+  }
 };
 
 export { initScaleControls, resetImageFormState, getCurrentEffect, getCurrentEffectLevel };
