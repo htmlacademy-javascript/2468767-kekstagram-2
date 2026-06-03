@@ -13,6 +13,8 @@ import {
 } from './dom.js';
 import { SCALE, EFFECTS, DEFAULT_EFFECT } from './data.js';
 
+let currentEffectLevel = EFFECTS[DEFAULT_EFFECT].min;
+
 // Получает текущий выбранный эффект
 const getCurrentEffect = () => {
   const effectsList = getEffectsList();
@@ -89,10 +91,14 @@ const setupSliderEventListeners = (slider) => {
     const effectConfig = EFFECTS[currentEffect];
     const value = Number(values[handle]);
 
+    // Сохраняем текущий уровень эффекта в переменную
+    currentEffectLevel = value;
+
     // Обновляем отображение значения
     const valueDisplay = getEffectLevelValue();
     if (valueDisplay) {
       valueDisplay.textContent = `${value}${effectConfig.unit}`;
+      valueDisplay.value = value;
     }
 
     // Применяем эффект
@@ -142,22 +148,27 @@ const updateEffectSlider = (effect) => {
     // Скрываем слайдер для эффекта 'none'
     container.classList.add('hidden');
     getPreviewImage().style.filter = 'none';
+    currentEffectLevel = 0;
   } else {
     // Обновляем настройки слайдера
     slider.noUiSlider.updateOptions({
       range: { min: effectConfig.min, max: effectConfig.max },
       step: effectConfig.step,
-      start: [effectConfig.min]
+      start: [effectConfig.max]
     });
 
     // Показываем контейнер и обновляем отображение
     container.classList.remove('hidden');
-    valueDisplay.textContent = `${effectConfig.min}${effectConfig.unit}`;
+    valueDisplay.textContent = `${effectConfig.max}${effectConfig.unit}`;
 
+    currentEffectLevel = effectConfig.max;
     // Применяем начальный эффект
-    applyEffectToImage(effect, effectConfig.min);
+    applyEffectToImage(effect, effectConfig.max);
   }
 };
+
+// Получает текущий уровень эффекта
+const getCurrentEffectLevel = () => currentEffectLevel;
 
 // Сброс масштаба к 100 %
 const resetScale = () => {
@@ -167,7 +178,7 @@ const resetScale = () => {
 // Сброс эффекта на «Оригинал»
 const resetEffect = () => {
   const effectsList = getEffectsList();
-  if (!effectsList){
+  if (!effectsList) {
     return;
   }
 
@@ -266,5 +277,4 @@ const resetImageFormState = () => {
   }
 };
 
-export { initScaleControls, resetImageFormState };
-
+export { initScaleControls, resetImageFormState, getCurrentEffect, getCurrentEffectLevel };
