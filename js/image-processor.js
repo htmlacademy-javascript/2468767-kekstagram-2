@@ -149,7 +149,7 @@ const updateEffectSlider = (effect) => {
     container.classList.add('hidden');
     getPreviewImage().style.filter = 'none';
     currentEffectLevel = 0;
-     // Явно сбрасываем значение в поле ввода
+    // Явно сбрасываем значение в поле ввода
     valueDisplay.textContent = '0';
     valueDisplay.value = '0';
 
@@ -202,7 +202,7 @@ const resetEffect = () => {
 
   // Обновляем слайдер
   updateEffectSlider('none');
-   // Дополнительная гарантия сброса поля ввода
+  // Дополнительная гарантия сброса поля ввода
   const valueDisplay = getEffectLevelValue();
   if (valueDisplay) {
     valueDisplay.value = '0';
