@@ -149,6 +149,12 @@ const updateEffectSlider = (effect) => {
     container.classList.add('hidden');
     getPreviewImage().style.filter = 'none';
     currentEffectLevel = 0;
+     // Явно сбрасываем значение в поле ввода
+    valueDisplay.textContent = '0';
+    valueDisplay.value = '0';
+
+    // Сброс слайдера к 0
+    slider.noUiSlider.set(0);
   } else {
     // Обновляем настройки слайдера
     slider.noUiSlider.updateOptions({
@@ -196,6 +202,11 @@ const resetEffect = () => {
 
   // Обновляем слайдер
   updateEffectSlider('none');
+   // Дополнительная гарантия сброса поля ввода
+  const valueDisplay = getEffectLevelValue();
+  if (valueDisplay) {
+    valueDisplay.value = '0';
+  }
 };
 
 // Обработчик смены эффекта
