@@ -1,19 +1,25 @@
 import { isEscapeKey } from './util.js';
+import { sendFormData } from './api.js';
 
 let currentSuccessElement = null;
 let currentErrorElement = null;
 
-// Удаление сообщения об успехе
+// Простые функции удаления (не вызывают обработчики)
 const removeSuccessMessage = () => {
   if (currentSuccessElement && currentSuccessElement.parentNode) {
     currentSuccessElement.parentNode.removeChild(currentSuccessElement);
     currentSuccessElement = null;
-    document.removeEventListener('keydown', onSuccessKeydown);
-    document.removeEventListener('click', onSuccessClickOutside);
   }
 };
 
-// Обработчик нажатия клавиш для сообщения успеха
+const removeErrorMessage = () => {
+  if (currentErrorElement && currentErrorElement.parentNode) {
+    currentErrorElement.parentNode.removeChild(currentErrorElement);
+    currentErrorElement = null;
+  }
+};
+
+// Обработчики событий (используют уже объявленные функции удаления)
 const onSuccessKeydown = (evt) => {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
@@ -21,51 +27,12 @@ const onSuccessKeydown = (evt) => {
   }
 };
 
-// Обработчик клика вне блока сообщения успеха
 const onSuccessClickOutside = (evt) => {
   if (!currentSuccessElement?.contains(evt.target)) {
     removeSuccessMessage();
   }
 };
 
-// Показ сообщения об успешной отправке
-const showSuccessMessage = () => {
-  const successTemplate = document.querySelector('#success');
-  if (!successTemplate) {
-    console.warn('Шаблон #success не найден');
-    return;
-  }
-
-  const fragment = successTemplate.content.cloneNode(true);
-  currentSuccessElement = fragment.firstElementChild;
-
-  if (!currentSuccessElement) {
-    console.warn('Не удалось извлечь элемент из шаблона #success');
-    return;
-  }
-
-  document.body.appendChild(currentSuccessElement);
-
-  const successButton = currentSuccessElement.querySelector('.success__button');
-  if (successButton) {
-    successButton.addEventListener('click', removeSuccessMessage);
-  }
-
-  document.addEventListener('keydown', onSuccessKeydown);
-  document.addEventListener('click', onSuccessClickOutside);
-};
-
-// Удаление сообщения об ошибке
-const removeErrorMessage = () => {
-  if (currentErrorElement && currentErrorElement.parentNode) {
-    currentErrorElement.parentNode.removeChild(currentErrorElement);
-    currentErrorElement = null;
-    document.removeEventListener('keydown', onErrorKeydown);
-    document.removeEventListener('click', onErrorClickOutside);
-  }
-};
-
-// Обработчик нажатия клавиш для сообщения ошибки
 const onErrorKeydown = (evt) => {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
@@ -73,18 +40,63 @@ const onErrorKeydown = (evt) => {
   }
 };
 
-// Обработчик клика вне блока сообщения ошибки
 const onErrorClickOutside = (evt) => {
   if (!currentErrorElement?.contains(evt.target)) {
     removeErrorMessage();
   }
 };
 
-// Показ сообщения об ошибке отправки
+// Используем обработчики и функции удаления
+const addSuccessEventListeners = () => {
+  document.addEventListener('keydown', onSuccessKeydown);
+  document.addEventListener('click', onSuccessClickOutside);
+};
+
+const removeSuccessEventListeners = () => {
+  document.removeEventListener('keydown', onSuccessKeydown);
+  document.removeEventListener('click', onSuccessClickOutside);
+};
+
+const addErrorEventListeners = () => {
+  document.addEventListener('keydown', onErrorKeydown);
+  document.addEventListener('click', onErrorClickOutside);
+};
+
+const removeErrorEventListeners = () => {
+  document.removeEventListener('keydown', onErrorKeydown);
+  document.removeEventListener('click', onErrorClickOutside);
+};
+
+// Функции показа сообщений (используют всё выше объявленное)
+const showSuccessMessage = () => {
+  const successTemplate = document.querySelector('#success');
+  if (!successTemplate) {
+    return;
+  }
+
+  const fragment = successTemplate.content.cloneNode(true);
+  currentSuccessElement = fragment.firstElementChild;
+
+  if (!currentSuccessElement) {
+    return;
+  }
+
+  document.body.appendChild(currentSuccessElement);
+
+  const successButton = currentSuccessElement.querySelector('.success__button');
+  if (successButton) {
+    successButton.addEventListener('click', () => {
+      removeSuccessMessage();
+      removeSuccessEventListeners();
+    });
+  }
+
+  addSuccessEventListeners();
+};
+
 const showErrorMessage = (errorMessage) => {
   const errorTemplate = document.querySelector('#error');
   if (!errorTemplate) {
-    console.warn('Шаблон #error не найден');
     return;
   }
 
@@ -92,7 +104,6 @@ const showErrorMessage = (errorMessage) => {
   currentErrorElement = fragment.firstElementChild;
 
   if (!currentErrorElement) {
-    console.warn('Не удалось извлечь элемент из шаблона #error');
     return;
   }
 
@@ -106,40 +117,16 @@ const showErrorMessage = (errorMessage) => {
 
   const errorButton = currentErrorElement.querySelector('.error__button');
   if (errorButton) {
-    errorButton.addEventListener('click', removeErrorMessage);
-  }
-
-  document.addEventListener('keydown', onErrorKeydown);
-  document.addEventListener('click', onErrorClickOutside);
-};
-
-const sendFormData = async (formData) => {
-  const submitButton = document.querySelector('.img-upload__submit');
-
-  try {
-    // Блокируем кнопку отправки
-    submitButton.disabled = true;
-    submitButton.textContent = 'Отправка...';
-
-    const response = await fetch('https://31.javascript.htmlacademy.pro/kekstagram', {
-      method: 'POST',
-      body: formData
+    errorButton.addEventListener('click', () => {
+      removeErrorMessage();
+      removeErrorEventListeners();
     });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    throw error;
-  } finally {
-    // Разблокируем кнопку после завершения запроса
-    submitButton.disabled = false;
-    submitButton.textContent = 'Отправить';
   }
+
+  addErrorEventListeners();
 };
 
+//Настраивает все обработчики событий для формы загрузки
 const setupEventHandlers = (
   fileInput,
   cancelButton,
@@ -170,15 +157,16 @@ const setupEventHandlers = (
       }
 
       try {
-        // Отправляем данные на сервер
-        await sendFormData(new FormData(uploadForm));
+        // Создаём FormData из формы
+        const formData = new FormData(uploadForm);
+
+        // Отправляем данные на сервер через API-модуль
+        await sendFormData(formData);
 
         // Показ успеха и закрытие формы с сбросом
         showSuccessMessage();
         onSubmitSuccess(); // Вызываем callback для сброса формы
       } catch (error) {
-        console.error('Ошибка отправки формы:', error);
-        // Показ ошибки — форма остаётся открытой для повторной отправки
         showErrorMessage('Не удалось отправить форму. Проверьте подключение и попробуйте ещё раз.');
       }
     });
@@ -205,4 +193,4 @@ const setupEventHandlers = (
   }
 };
 
-export { setupEventHandlers, showSuccessMessage, showErrorMessage, sendFormData };
+export { setupEventHandlers, showSuccessMessage, showErrorMessage};

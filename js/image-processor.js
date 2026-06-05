@@ -13,6 +13,8 @@ import {
 } from './dom.js';
 import { SCALE, EFFECTS, DEFAULT_EFFECT } from './data.js';
 
+let currentEffectLevel = EFFECTS[DEFAULT_EFFECT].min;
+
 // Получает текущий выбранный эффект
 const getCurrentEffect = () => {
   const effectsList = getEffectsList();
@@ -89,10 +91,14 @@ const setupSliderEventListeners = (slider) => {
     const effectConfig = EFFECTS[currentEffect];
     const value = Number(values[handle]);
 
+    // Сохраняем текущий уровень эффекта в переменную
+    currentEffectLevel = value;
+
     // Обновляем отображение значения
     const valueDisplay = getEffectLevelValue();
     if (valueDisplay) {
       valueDisplay.textContent = `${value}${effectConfig.unit}`;
+      valueDisplay.value = value;
     }
 
     // Применяем эффект
@@ -142,22 +148,33 @@ const updateEffectSlider = (effect) => {
     // Скрываем слайдер для эффекта 'none'
     container.classList.add('hidden');
     getPreviewImage().style.filter = 'none';
+    currentEffectLevel = 0;
+    // Явно сбрасываем значение в поле ввода
+    valueDisplay.textContent = '0';
+    valueDisplay.value = '0';
+
+    // Сброс слайдера к 0
+    slider.noUiSlider.set(0);
   } else {
     // Обновляем настройки слайдера
     slider.noUiSlider.updateOptions({
       range: { min: effectConfig.min, max: effectConfig.max },
       step: effectConfig.step,
-      start: [effectConfig.min]
+      start: [effectConfig.max]
     });
 
     // Показываем контейнер и обновляем отображение
     container.classList.remove('hidden');
-    valueDisplay.textContent = `${effectConfig.min}${effectConfig.unit}`;
+    valueDisplay.textContent = `${effectConfig.max}${effectConfig.unit}`;
 
+    currentEffectLevel = effectConfig.max;
     // Применяем начальный эффект
-    applyEffectToImage(effect, effectConfig.min);
+    applyEffectToImage(effect, effectConfig.max);
   }
 };
+
+// Получает текущий уровень эффекта
+const getCurrentEffectLevel = () => currentEffectLevel;
 
 // Сброс масштаба к 100 %
 const resetScale = () => {
@@ -167,11 +184,13 @@ const resetScale = () => {
 // Сброс эффекта на «Оригинал»
 const resetEffect = () => {
   const effectsList = getEffectsList();
-  if (!effectsList) return;
+  if (!effectsList) {
+    return;
+  }
 
   // Сбрасываем все радио‑кнопки эффектов
   const effectButtons = effectsList.querySelectorAll('.effects__radio');
-  effectButtons.forEach(button => {
+  effectButtons.forEach((button) => {
     button.checked = false;
   });
 
@@ -183,6 +202,11 @@ const resetEffect = () => {
 
   // Обновляем слайдер
   updateEffectSlider('none');
+  // Дополнительная гарантия сброса поля ввода
+  const valueDisplay = getEffectLevelValue();
+  if (valueDisplay) {
+    valueDisplay.value = '0';
+  }
 };
 
 // Обработчик смены эффекта
@@ -244,17 +268,24 @@ const resetImageFormState = () => {
   // 3. Очистка полей ввода
   const hashtagsInput = getHashtagsInput();
   const descriptionInput = getDescriptionInput();
-  if (hashtagsInput) hashtagsInput.value = '';
-  if (descriptionInput) descriptionInput.value = '';
+  if (hashtagsInput) {
+    hashtagsInput.value = '';
+  }
+  if (descriptionInput) {
+    descriptionInput.value = '';
+  }
 
   // 4. Очистка поля загрузки фотографии
   const fileInput = getFileInput();
-  if (fileInput) fileInput.value = '';
+  if (fileInput) {
+    fileInput.value = '';
+  }
 
   // 5. Сброс превью изображения
   const previewImage = getPreviewImage();
-  if (previewImage) previewImage.src = 'img/upload-default-image.jpg';
+  if (previewImage) {
+    previewImage.src = 'img/upload-default-image.jpg';
+  }
 };
 
-export { initScaleControls, resetImageFormState };
-
+export { initScaleControls, resetImageFormState, getCurrentEffect, getCurrentEffectLevel };

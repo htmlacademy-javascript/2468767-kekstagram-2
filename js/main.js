@@ -4,18 +4,21 @@ import { initUploadForm } from './image-upload.js';
 import { initScaleControls } from './image-processor.js';
 
 // Глобальная переменная для хранения данных
-let thumbsList = [];
+let thumbsList = null;
 
 // Функция инициализации приложения
 const initApp = async () => {
   try {
+    // Загружаем данные один раз
     thumbsList = await loadThumbsFromServer();
+
+    // Инициализируем остальные модули с уже загруженными данными
     initGallery();
     initThumbnailHandlers(thumbsList);
     initScaleControls();
-    initUploadForm(); // Вызываем после загрузки данных
+    initUploadForm();
   } catch (error) {
-    console.error('Ошибка инициализации:', error);
+    throw new Error(`Ошибка инициализации: ${error.message}`);
   }
 };
 

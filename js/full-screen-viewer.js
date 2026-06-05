@@ -1,16 +1,29 @@
 import { isEscapeKey } from './util.js';
-import { getBigPicture, getBody,getCommentsContainer, getCommentCountElement, getCommentsLoaderElement,getShownCommentCountElement, getTotalCommentCountElement,getLikesCountElement, getCaptionElement, getImageElement} from './dom.js';
+import {
+  getBigPicture,
+  getBody,
+  getCommentsContainer,
+  getCommentCountElement,
+  getCommentsLoaderElement,
+  getShownCommentCountElement,
+  getTotalCommentCountElement,
+  getLikesCountElement,
+  getCaptionElement,
+  getImageElement
+} from './dom.js';
 
 const COMMENTS_PER_PAGE = 5;
 let currentCommentsShown = 0;
 
+// Кэшированная переменная для элемента bigPicture
+let cachedBigPicture = null;
+
 // Закрытие модального окна
 const closeFullScreen = () => {
-  const bigPicture = getBigPicture();
   const body = getBody();
 
-  if (bigPicture) {
-    bigPicture.classList.add('hidden');
+  if (cachedBigPicture) {
+    cachedBigPicture.classList.add('hidden');
   }
   if (body) {
     body.classList.remove('modal-open');
@@ -20,9 +33,12 @@ const closeFullScreen = () => {
 
 // Настройка обработчиков закрытия
 const setupCloseHandlers = () => {
-  const closeButton = getBigPicture()?.querySelector('.big-picture__cancel');
+  if (!cachedBigPicture) {
+    return;
+  }
 
-  if (!closeButton){
+  const closeButton = cachedBigPicture.querySelector('.big-picture__cancel');
+  if (!closeButton) {
     return;
   }
 
@@ -113,6 +129,7 @@ const fillPostData = (photoData) => {
     captionEl.textContent = photoData.descriptions || '';
   }
 };
+
 // Показываем элементы интерфейса
 const showInterfaceElements = () => {
   const commentCountEl = getCommentCountElement();
@@ -138,14 +155,12 @@ const clearComments = () => {
 // Настраиваем обработчик загрузки комментариев — вызывается один раз
 const setupLoadMoreHandler = () => {
   const commentsLoaderEl = getCommentsLoaderElement();
-
   if (!commentsLoaderEl) {
     return;
   }
 
   commentsLoaderEl.addEventListener('click', () => {
-    const bigPicture = getBigPicture();
-    const savedComments = bigPicture?.dataset.currentComments;
+    const savedComments = cachedBigPicture?.dataset.currentComments;
     if (savedComments) {
       renderComments(JSON.parse(savedComments));
     }
@@ -153,14 +168,12 @@ const setupLoadMoreHandler = () => {
 };
 
 const openFullScreen = (photoData) => {
-  const bigPicture = getBigPicture();
-
-  if (!bigPicture) {
+  if (!cachedBigPicture) {
     throw new Error('Элемент .big-picture не найден в DOM');
   }
 
   // Сохраняем комментарии в атрибуте
-  bigPicture.dataset.currentComments = JSON.stringify(photoData.comments);
+  cachedBigPicture.dataset.currentComments = JSON.stringify(photoData.comments);
 
   // Заполняем данные
   fillPostData(photoData);
@@ -175,12 +188,19 @@ const openFullScreen = (photoData) => {
   renderComments(photoData.comments);
 
   // Добавляем классы
-  bigPicture.classList.remove('hidden');
+  cachedBigPicture.classList.remove('hidden');
   getBody().classList.add('modal-open');
 };
 
 // Инициализация — вызываем один раз при загрузке страницы
 const initGallery = () => {
+  // Получаем элемент один раз при инициализации
+  cachedBigPicture = getBigPicture();
+
+  if (!cachedBigPicture) {
+    throw new Error('Элемент .big-picture не найден в DOM при инициализации');
+  }
+
   setupCloseHandlers();
   setupLoadMoreHandler();
 };
@@ -207,6 +227,4 @@ const initThumbnailHandlers = (photoDataList) => {
   });
 };
 
-document.addEventListener('DOMContentLoaded', initGallery);
-
-export {initGallery,initThumbnailHandlers};
+export {initGallery, initThumbnailHandlers};
