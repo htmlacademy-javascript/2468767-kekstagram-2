@@ -1,4 +1,5 @@
 import { getData } from './api.js';
+import{debounce} from './util.js';
 
 // Функция для показа блока фильтров
 const showFiltersBlock = () => {
@@ -45,15 +46,6 @@ const renderThumbs = (thumbsList) => {
 
   // Показываем блок фильтров после отрисовки изображений
   showFiltersBlock();
-};
-
-// Функция устранения дребезга
-const debounce = (callback, delay) => {
-  let timeoutId;
-  return (...args) => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => callback.apply(null, args), delay);
-  };
 };
 
 // Функция для получения 10 случайных уникальных элементов

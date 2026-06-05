@@ -13,7 +13,7 @@ const initApp = async () => {
     thumbsList = await loadThumbsFromServer();
 
     // Инициализируем остальные модули с уже загруженными данными
-    initGallery(thumbsList);
+    initGallery();
     initThumbnailHandlers(thumbsList);
     initScaleControls();
     initUploadForm();
