@@ -193,4 +193,4 @@ const setupEventHandlers = (
   }
 };
 
-export { setupEventHandlers, showSuccessMessage, showErrorMessage, sendFormData };
+export { setupEventHandlers, showSuccessMessage, showErrorMessage};

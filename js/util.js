@@ -7,4 +7,13 @@ const getRandomArrayName = (array) => array[getRandomInt(0, array.length - 1)];
 //проверка нажатия esc
 export const isEscapeKey = (evt) => evt.key === 'Escape';
 
-export {getRandomInt,getRandomArrayName};
+// Функция устранения дребезга
+const debounce = (callback, delay) => {
+  let timeoutId;
+  return (...args) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(null, args), delay);
+  };
+};
+
+export {getRandomInt,getRandomArrayName,debounce};
