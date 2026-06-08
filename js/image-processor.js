@@ -159,8 +159,6 @@ const updateEffectSlider = (effect) => {
     // Показываем контейнер и обновляем отображение
     container.classList.remove('hidden');
     valueDisplay.textContent = `${effectConfig.max}${effectConfig.unit}`;
-
-    currentEffectLevel = effectConfig.max;
     // Применяем начальный эффект
     applyEffectToImage(effect, effectConfig.max);
   }
