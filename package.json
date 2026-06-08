@@ -21,7 +21,7 @@
     "lint": "eslint js/"
   },
   "engines": {
-    "node": "^24",
-    "npm": "^11"
+    "node": "^20",
+    "npm": "^10"
   }
 }
