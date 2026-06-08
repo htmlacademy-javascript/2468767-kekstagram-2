@@ -29,7 +29,7 @@ const initUploadForm = () => {
   // Инициализация валидации
   const pristine = initValidation(uploadForm, hashtagsInput, descriptionInput);
 
-  const handleFileChange = (evt) => {
+  const onFileInputChange = (evt) => {
     const file = evt.target.files[0];
 
     if (file && file.type.startsWith('image/')) {
@@ -64,7 +64,7 @@ const initUploadForm = () => {
   };
 
   // Добавляем обработчик выбора файла
-  fileInput.addEventListener('change', handleFileChange);
+  fileInput.addEventListener('change', onFileInputChange);
 
   // Настройка остальных обработчиков событий
   setupEventHandlers(

@@ -13,8 +13,6 @@ import {
 } from './dom.js';
 import { SCALE, EFFECTS, DEFAULT_EFFECT } from './data.js';
 
-let currentEffectLevel = EFFECTS[DEFAULT_EFFECT].min;
-
 // Получает текущий выбранный эффект
 const getCurrentEffect = () => {
   const effectsList = getEffectsList();
@@ -85,15 +83,11 @@ const createEffectSlider = (slider, effect) => {
 };
 
 // Настраивает обработчики событий для слайдера
-const setupSliderEventListeners = (slider) => {
+const addSliderEventListeners = (slider) => {
   slider.noUiSlider.on('update', (values, handle) => {
     const currentEffect = getCurrentEffect();
     const effectConfig = EFFECTS[currentEffect];
     const value = Number(values[handle]);
-
-    // Сохраняем текущий уровень эффекта в переменную
-    currentEffectLevel = value;
-
     // Обновляем отображение значения
     const valueDisplay = getEffectLevelValue();
     if (valueDisplay) {
@@ -125,7 +119,7 @@ const initEffectSlider = () => {
     createEffectSlider(slider, DEFAULT_EFFECT);
 
     // Настраиваем обработчики событий
-    setupSliderEventListeners(slider);
+    addSliderEventListeners(slider);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Ошибка инициализации слайдера эффекта:', error);
@@ -148,7 +142,6 @@ const updateEffectSlider = (effect) => {
     // Скрываем слайдер для эффекта 'none'
     container.classList.add('hidden');
     getPreviewImage().style.filter = 'none';
-    currentEffectLevel = 0;
     // Явно сбрасываем значение в поле ввода
     valueDisplay.textContent = '0';
     valueDisplay.value = '0';
@@ -166,15 +159,10 @@ const updateEffectSlider = (effect) => {
     // Показываем контейнер и обновляем отображение
     container.classList.remove('hidden');
     valueDisplay.textContent = `${effectConfig.max}${effectConfig.unit}`;
-
-    currentEffectLevel = effectConfig.max;
     // Применяем начальный эффект
     applyEffectToImage(effect, effectConfig.max);
   }
 };
-
-// Получает текущий уровень эффекта
-const getCurrentEffectLevel = () => currentEffectLevel;
 
 // Сброс масштаба к 100 %
 const resetScale = () => {
@@ -288,4 +276,4 @@ const resetImageFormState = () => {
   }
 };
 
-export { initScaleControls, resetImageFormState, getCurrentEffect, getCurrentEffectLevel };
+export { initScaleControls, resetImageFormState, getCurrentEffect };
