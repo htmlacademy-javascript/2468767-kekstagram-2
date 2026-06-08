@@ -13,8 +13,6 @@ import {
 } from './dom.js';
 import { SCALE, EFFECTS, DEFAULT_EFFECT } from './data.js';
 
-let currentEffectLevel = EFFECTS[DEFAULT_EFFECT].min;
-
 // Получает текущий выбранный эффект
 const getCurrentEffect = () => {
   const effectsList = getEffectsList();
@@ -90,10 +88,6 @@ const addSliderEventListeners = (slider) => {
     const currentEffect = getCurrentEffect();
     const effectConfig = EFFECTS[currentEffect];
     const value = Number(values[handle]);
-
-    // Сохраняем текущий уровень эффекта в переменную
-    currentEffectLevel = value;
-
     // Обновляем отображение значения
     const valueDisplay = getEffectLevelValue();
     if (valueDisplay) {
@@ -148,7 +142,6 @@ const updateEffectSlider = (effect) => {
     // Скрываем слайдер для эффекта 'none'
     container.classList.add('hidden');
     getPreviewImage().style.filter = 'none';
-    currentEffectLevel = 0;
     // Явно сбрасываем значение в поле ввода
     valueDisplay.textContent = '0';
     valueDisplay.value = '0';
