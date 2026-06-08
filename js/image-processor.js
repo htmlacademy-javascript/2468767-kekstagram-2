@@ -85,7 +85,7 @@ const createEffectSlider = (slider, effect) => {
 };
 
 // Настраивает обработчики событий для слайдера
-const setupSliderEventListeners = (slider) => {
+const addSliderEventListeners = (slider) => {
   slider.noUiSlider.on('update', (values, handle) => {
     const currentEffect = getCurrentEffect();
     const effectConfig = EFFECTS[currentEffect];
@@ -125,7 +125,7 @@ const initEffectSlider = () => {
     createEffectSlider(slider, DEFAULT_EFFECT);
 
     // Настраиваем обработчики событий
-    setupSliderEventListeners(slider);
+    addSliderEventListeners(slider);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Ошибка инициализации слайдера эффекта:', error);
@@ -172,9 +172,6 @@ const updateEffectSlider = (effect) => {
     applyEffectToImage(effect, effectConfig.max);
   }
 };
-
-// Получает текущий уровень эффекта
-const getCurrentEffectLevel = () => currentEffectLevel;
 
 // Сброс масштаба к 100 %
 const resetScale = () => {
@@ -288,4 +285,4 @@ const resetImageFormState = () => {
   }
 };
 
-export { initScaleControls, resetImageFormState, getCurrentEffect, getCurrentEffectLevel };
+export { initScaleControls, resetImageFormState, getCurrentEffect };
