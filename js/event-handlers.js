@@ -4,6 +4,9 @@ import { sendFormData } from './api.js';
 let currentSuccessElement = null;
 let currentErrorElement = null;
 
+// Флаг: открыта ли сейчас ошибка
+let isErrorShown = false;
+
 // Простые функции удаления (не вызывают обработчики)
 const removeSuccessMessage = () => {
   if (currentSuccessElement && currentSuccessElement.parentNode) {
@@ -16,10 +19,32 @@ const removeErrorMessage = () => {
   if (currentErrorElement && currentErrorElement.parentNode) {
     currentErrorElement.parentNode.removeChild(currentErrorElement);
     currentErrorElement = null;
+    isErrorShown = false; // Сбрасываем флаг при закрытии ошибки
   }
 };
 
-// Обработчики событий (используют уже объявленные функции удаления)
+// Функция сброса данных формы
+const resetFormData = (uploadForm, hashtagsInput, descriptionInput, fileInput, previewImage, pristine) => {
+  // Очищаем поля ввода
+  hashtagsInput.value = '';
+  descriptionInput.value = '';
+
+  // Сбрасываем превью изображения
+  if (fileInput.files.length > 0) {
+    fileInput.value = '';
+  }
+  previewImage.src = 'img/upload-default-image.jpg'; // Устанавливаем изображение по умолчанию
+
+  // Сбрасываем валидатор
+  if (pristine) {
+    pristine.reset();
+  }
+
+  // Дополнительно: сбрасываем состояние формы (если есть другие элементы)
+  uploadForm.reset();
+};
+
+// Обработчики событий
 const onSuccessKeydown = (evt) => {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
@@ -34,9 +59,10 @@ const onSuccessClickOutside = (evt) => {
 };
 
 const onErrorKeydown = (evt) => {
-  if (isEscapeKey(evt)) {
+  if (isEscapeKey(evt) && isErrorShown) {
     evt.preventDefault();
     removeErrorMessage();
+    removeErrorEventListeners();
   }
 };
 
@@ -67,7 +93,7 @@ const removeErrorEventListeners = () => {
   document.removeEventListener('click', onErrorClickOutside);
 };
 
-// Функции показа сообщений (используют всё выше объявленное)
+// Функции показа сообщений
 const showSuccessMessage = () => {
   const successTemplate = document.querySelector('#success');
   if (!successTemplate) {
@@ -120,13 +146,17 @@ const showErrorMessage = (errorMessage) => {
     errorButton.addEventListener('click', () => {
       removeErrorMessage();
       removeErrorEventListeners();
+      resetFormData(uploadForm, hashtagsInput, descriptionInput, fileInput, previewImage, pristine);
     });
   }
 
+  // Обработчик закрытия по клику вне окна ошибки
+  document.addEventListener('click', onErrorClickOutside);
+  isErrorShown = true; // Устанавливаем флаг — ошибка открыта
   addErrorEventListeners();
 };
 
-//Настраивает все обработчики событий для формы загрузки
+// Настраивает все обработчики событий для формы загрузки
 const setupEventHandlers = (
   fileInput,
   cancelButton,
@@ -144,7 +174,11 @@ const setupEventHandlers = (
 ) => {
   // Обработчик кнопки отмены
   if (cancelButton && onCancelClick) {
-    cancelButton.addEventListener('click', onCancelClick);
+    cancelButton.addEventListener('click', (evt) => {
+      evt.preventDefault();
+      hideEditForm(overlay, body, fileInput, previewImage, hashtagsInput, descriptionInput, pristine);
+      resetFormData(uploadForm, hashtagsInput, descriptionInput, fileInput, previewImage, pristine);
+    });
   }
 
   // Обработчик отправки формы
@@ -166,6 +200,7 @@ const setupEventHandlers = (
         // Показ успеха и закрытие формы с сбросом
         showSuccessMessage();
         onSubmitSuccess(); // Вызываем callback для сброса формы
+        resetFormData(uploadForm, hashtagsInput, descriptionInput, fileInput, previewImage, pristine);
       } catch (error) {
         showErrorMessage('Не удалось отправить форму. Проверьте подключение и попробуйте ещё раз.');
       }
@@ -175,10 +210,19 @@ const setupEventHandlers = (
   // Обработчик закрытия по Esc (вне формы редактирования)
   document.addEventListener('keydown', (evt) => {
     if (isEscapeKey(evt) && overlay && !overlay.classList.contains('hidden')) {
+      // 1. Если ошибка открыта — закрываем только ошибку (приоритет)
+      if (isErrorShown) {
+        evt.preventDefault();
+        removeErrorMessage();
+        return; // Прерываем выполнение, чтобы не закрывать форму
+      }
+
+      // 2. Если ошибки нет — закрываем форму и сбрасываем данные
       const isInInput = document.activeElement === hashtagsInput || document.activeElement === descriptionInput;
       if (!isInInput) {
         evt.preventDefault();
         hideEditForm(overlay, body, fileInput, previewImage, hashtagsInput, descriptionInput, pristine);
+        resetFormData(uploadForm, hashtagsInput, descriptionInput, fileInput, previewImage, pristine);
       }
     }
   });
@@ -188,9 +232,10 @@ const setupEventHandlers = (
     overlay.addEventListener('click', (evt) => {
       if (!evt.target.closest('.img-upload__wrapper')) {
         hideEditForm(overlay, body, fileInput, previewImage, hashtagsInput, descriptionInput, pristine);
+        resetFormData(uploadForm, hashtagsInput, descriptionInput, fileInput, previewImage, pristine);
       }
     });
   }
 };
 
-export { setupEventHandlers, showSuccessMessage, showErrorMessage};
+export { setupEventHandlers, showSuccessMessage, showErrorMessage };
