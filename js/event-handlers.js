@@ -4,7 +4,7 @@ import { sendFormData } from './api.js';
 let currentSuccessElement = null;
 let currentErrorElement = null;
 
-// Флаг: открыта ли сейчас ошибка
+// Флаг: открыта ли сейчас ошибка (ключевое дополнение)
 let isErrorShown = false;
 
 // Простые функции удаления (не вызывают обработчики)
@@ -21,27 +21,6 @@ const removeErrorMessage = () => {
     currentErrorElement = null;
     isErrorShown = false; // Сбрасываем флаг при закрытии ошибки
   }
-};
-
-// Функция сброса данных формы
-const resetFormData = (uploadForm, hashtagsInput, descriptionInput, fileInput, previewImage, pristine) => {
-  // Очищаем поля ввода
-  hashtagsInput.value = '';
-  descriptionInput.value = '';
-
-  // Сбрасываем превью изображения
-  if (fileInput.files.length > 0) {
-    fileInput.value = '';
-  }
-  previewImage.src = 'img/upload-default-image.jpg'; // Устанавливаем изображение по умолчанию
-
-  // Сбрасываем валидатор
-  if (pristine) {
-    pristine.reset();
-  }
-
-  // Дополнительно: сбрасываем состояние формы (если есть другие элементы)
-  uploadForm.reset();
 };
 
 // Обработчики событий
@@ -120,8 +99,7 @@ const showSuccessMessage = () => {
   addSuccessEventListeners();
 };
 
-// Обновлённая функция showErrorMessage с параметрами
-const showErrorMessage = (errorMessage, uploadForm, hashtagsInput, descriptionInput, fileInput, previewImage, pristine) => {
+const showErrorMessage = (errorMessage) => {
   const errorTemplate = document.querySelector('#error');
   if (!errorTemplate) {
     return;
@@ -147,12 +125,9 @@ const showErrorMessage = (errorMessage, uploadForm, hashtagsInput, descriptionIn
     errorButton.addEventListener('click', () => {
       removeErrorMessage();
       removeErrorEventListeners();
-      resetFormData(uploadForm, hashtagsInput, descriptionInput, fileInput, previewImage, pristine);
     });
   }
 
-  // Обработчик закрытия по клику вне окна ошибки
-  document.addEventListener('click', onErrorClickOutside);
   isErrorShown = true; // Устанавливаем флаг — ошибка открыта
   addErrorEventListeners();
 };
@@ -175,11 +150,7 @@ const setupEventHandlers = (
 ) => {
   // Обработчик кнопки отмены
   if (cancelButton && onCancelClick) {
-    cancelButton.addEventListener('click', (evt) => {
-      evt.preventDefault();
-      hideEditForm(overlay, body, fileInput, previewImage, hashtagsInput, descriptionInput, pristine);
-      resetFormData(uploadForm, hashtagsInput, descriptionInput, fileInput, previewImage, pristine);
-    });
+    cancelButton.addEventListener('click', onCancelClick);
   }
 
   // Обработчик отправки формы
@@ -201,18 +172,8 @@ const setupEventHandlers = (
         // Показ успеха и закрытие формы с сбросом
         showSuccessMessage();
         onSubmitSuccess(); // Вызываем callback для сброса формы
-        resetFormData(uploadForm, hashtagsInput, descriptionInput, fileInput, previewImage, pristine);
       } catch (error) {
-        // ПЕРЕДАЁМ ВСЕ НЕОБХОДИМЫЕ ПАРАМЕТРЫ В showErrorMessage
-        showErrorMessage(
-          'Не удалось отправить форму. Проверьте подключение и попробуйте ещё раз.',
-          uploadForm,
-          hashtagsInput,
-          descriptionInput,
-          fileInput,
-          previewImage,
-          pristine
-        );
+        showErrorMessage('Не удалось отправить форму. Проверьте подключение и попробуйте ещё раз.');
       }
     });
   }
@@ -227,12 +188,11 @@ const setupEventHandlers = (
         return; // Прерываем выполнение, чтобы не закрывать форму
       }
 
-      // 2. Если ошибки нет — закрываем форму и сбрасываем данные
+      // 2. Если ошибки нет — закрываем форму
       const isInInput = document.activeElement === hashtagsInput || document.activeElement === descriptionInput;
       if (!isInInput) {
         evt.preventDefault();
         hideEditForm(overlay, body, fileInput, previewImage, hashtagsInput, descriptionInput, pristine);
-        resetFormData(uploadForm, hashtagsInput, descriptionInput, fileInput, previewImage, pristine);
       }
     }
   });
@@ -242,7 +202,6 @@ const setupEventHandlers = (
     overlay.addEventListener('click', (evt) => {
       if (!evt.target.closest('.img-upload__wrapper')) {
         hideEditForm(overlay, body, fileInput, previewImage, hashtagsInput, descriptionInput, pristine);
-        resetFormData(uploadForm, hashtagsInput, descriptionInput, fileInput, previewImage, pristine);
       }
     });
   }
