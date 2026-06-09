@@ -44,6 +44,12 @@ const resetFormData = (uploadForm, hashtagsInput, descriptionInput, fileInput, p
   uploadForm.reset();
 };
 
+// Сначала объявляем функции, которые будут использоваться в обработчиках
+const removeErrorEventListeners = () => {
+  document.removeEventListener('keydown', onErrorKeydown);
+  document.removeEventListener('click', onErrorClickOutside);
+};
+
 // Обработчики событий
 const onSuccessKeydown = (evt) => {
   if (isEscapeKey(evt)) {
@@ -88,11 +94,6 @@ const addErrorEventListeners = () => {
   document.addEventListener('click', onErrorClickOutside);
 };
 
-const removeErrorEventListeners = () => {
-  document.removeEventListener('keydown', onErrorKeydown);
-  document.removeEventListener('click', onErrorClickOutside);
-};
-
 // Функции показа сообщений
 const showSuccessMessage = () => {
   const successTemplate = document.querySelector('#success');
@@ -120,7 +121,8 @@ const showSuccessMessage = () => {
   addSuccessEventListeners();
 };
 
-const showErrorMessage = (errorMessage) => {
+// Обновлённая функция showErrorMessage с параметрами
+const showErrorMessage = (errorMessage, uploadForm, hashtagsInput, descriptionInput, fileInput, previewImage, pristine) => {
   const errorTemplate = document.querySelector('#error');
   if (!errorTemplate) {
     return;
@@ -202,7 +204,16 @@ const setupEventHandlers = (
         onSubmitSuccess(); // Вызываем callback для сброса формы
         resetFormData(uploadForm, hashtagsInput, descriptionInput, fileInput, previewImage, pristine);
       } catch (error) {
-        showErrorMessage('Не удалось отправить форму. Проверьте подключение и попробуйте ещё раз.');
+        // ПЕРЕДАЁМ ВСЕ НЕОБХОДИМЫЕ ПАРАМЕТРЫ В showErrorMessage
+        showErrorMessage(
+          'Не удалось отправить форму. Проверьте подключение и попробуйте ещё раз.',
+          uploadForm,
+          hashtagsInput,
+          descriptionInput,
+          fileInput,
+          previewImage,
+          pristine
+        );
       }
     });
   }
