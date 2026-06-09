@@ -1,8 +1,9 @@
 const BASE_URL = 'https://31.javascript.htmlacademy.pro/kekstagram';
 
-//Отправляет данные формы на сервер
+// Отправляет данные формы на сервер
 const sendFormData = async (formData) => {
   const submitButton = document.querySelector('.img-upload__submit');
+
 
   try {
     // Блокируем кнопку отправки
@@ -28,7 +29,7 @@ const sendFormData = async (formData) => {
   }
 };
 
-//Получает данные с сервера
+// Получает данные с сервера
 const getData = async (endpoint) => {
   try {
     const response = await fetch(`${BASE_URL}${endpoint}`);

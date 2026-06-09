@@ -4,6 +4,9 @@ import { sendFormData } from './api.js';
 let currentSuccessElement = null;
 let currentErrorElement = null;
 
+// Флаг: открыта ли сейчас ошибка (ключевое дополнение)
+let isErrorShown = false;
+
 // Простые функции удаления (не вызывают обработчики)
 const removeSuccessMessage = () => {
   if (currentSuccessElement && currentSuccessElement.parentNode) {
@@ -16,10 +19,11 @@ const removeErrorMessage = () => {
   if (currentErrorElement && currentErrorElement.parentNode) {
     currentErrorElement.parentNode.removeChild(currentErrorElement);
     currentErrorElement = null;
+    isErrorShown = false; // Сбрасываем флаг при закрытии ошибки
   }
 };
 
-// Обработчики событий (используют уже объявленные функции удаления)
+// Обработчики событий
 const onSuccessKeydown = (evt) => {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
@@ -34,9 +38,10 @@ const onSuccessClickOutside = (evt) => {
 };
 
 const onErrorKeydown = (evt) => {
-  if (isEscapeKey(evt)) {
+  if (isEscapeKey(evt) && isErrorShown) {
     evt.preventDefault();
     removeErrorMessage();
+    removeErrorEventListeners();
   }
 };
 
@@ -67,7 +72,7 @@ const removeErrorEventListeners = () => {
   document.removeEventListener('click', onErrorClickOutside);
 };
 
-// Функции показа сообщений (используют всё выше объявленное)
+// Функции показа сообщений
 const showSuccessMessage = () => {
   const successTemplate = document.querySelector('#success');
   if (!successTemplate) {
@@ -123,10 +128,11 @@ const showErrorMessage = (errorMessage) => {
     });
   }
 
+  isErrorShown = true; // Устанавливаем флаг — ошибка открыта
   addErrorEventListeners();
 };
 
-//Настраивает все обработчики событий для формы загрузки
+// Настраивает все обработчики событий для формы загрузки
 const setupEventHandlers = (
   fileInput,
   cancelButton,
@@ -175,6 +181,14 @@ const setupEventHandlers = (
   // Обработчик закрытия по Esc (вне формы редактирования)
   document.addEventListener('keydown', (evt) => {
     if (isEscapeKey(evt) && overlay && !overlay.classList.contains('hidden')) {
+      // 1. Если ошибка открыта — закрываем только ошибку (приоритет)
+      if (isErrorShown) {
+        evt.preventDefault();
+        removeErrorMessage();
+        return; // Прерываем выполнение, чтобы не закрывать форму
+      }
+
+      // 2. Если ошибки нет — закрываем форму
       const isInInput = document.activeElement === hashtagsInput || document.activeElement === descriptionInput;
       if (!isInInput) {
         evt.preventDefault();
@@ -193,4 +207,4 @@ const setupEventHandlers = (
   }
 };
 
-export { setupEventHandlers, showSuccessMessage, showErrorMessage};
+export { setupEventHandlers, showSuccessMessage, showErrorMessage };
