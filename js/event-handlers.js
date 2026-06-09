@@ -4,12 +4,11 @@ import { sendFormData } from './api.js';
 let currentSuccessElement = null;
 let currentErrorElement = null;
 
-
 // Флаг: открыта ли сейчас ошибка
 let isErrorShown = false;
 
-// Хранилище для ссылок на обработчики
-let errorEventHandlers = {
+// Хранилище для ссылок на обработчики — используем const, так как сам объект не переза присваивается
+const errorEventHandlers = {
   keydown: null,
   click: null
 };
@@ -30,7 +29,21 @@ const removeErrorMessage = () => {
   }
 };
 
-// Обработчики событий
+// Сначала объявляем removeErrorEventListeners — до функций, которые его вызывают
+const removeErrorEventListeners = () => {
+  // Удаляем только если обработчики установлены
+  if (errorEventHandlers.keydown) {
+    document.removeEventListener('keydown', errorEventHandlers.keydown);
+    errorEventHandlers.keydown = null; // Очищаем ссылку
+  }
+
+  if (errorEventHandlers.click) {
+    document.removeEventListener('click', errorEventHandlers.click);
+    errorEventHandlers.click = null; // Очищаем ссылку
+  }
+};
+
+// Обработчики событий — теперь могут безопасно вызывать removeErrorEventListeners
 const onSuccessKeydown = (evt) => {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
@@ -48,7 +61,7 @@ const onErrorKeydown = (evt) => {
   if (isEscapeKey(evt) && isErrorShown) {
     evt.preventDefault();
     removeErrorMessage();
-    removeErrorEventListeners();
+    removeErrorEventListeners(); // Теперь функция уже объявлена — ошибки нет
   }
 };
 
@@ -58,7 +71,7 @@ const onErrorClickOutside = (evt) => {
   }
 };
 
-// Функции управления обработчиками — теперь без циклических зависимостей
+// Функции управления обработчиками
 const addErrorEventListeners = () => {
   // Сохраняем ссылки на обработчики в хранилище
   errorEventHandlers.keydown = onErrorKeydown;
@@ -68,20 +81,6 @@ const addErrorEventListeners = () => {
   document.addEventListener('click', errorEventHandlers.click);
 };
 
-const removeErrorEventListeners = () => {
-  // Удаляем только если обработчики установлены
-  if (errorEventHandlers.keydown) {
-    document.removeEventListener('keydown', errorEventHandlers.keydown);
-    errorEventHandlers.keydown = null; // Очищаем ссылку
-  }
-
-  if (errorEventHandlers.click) {
-    document.removeEventListener('click', errorEventHandlers.click);
-    errorEventHandlers.click = null; // Очищаем ссылку
-  }
-};
-
-// Используем обработчики и функции удаления
 const addSuccessEventListeners = () => {
   document.addEventListener('keydown', onSuccessKeydown);
   document.addEventListener('click', onSuccessClickOutside);
@@ -144,7 +143,7 @@ const showErrorMessage = (errorMessage) => {
   if (errorButton) {
     errorButton.addEventListener('click', () => {
       removeErrorMessage();
-      removeErrorEventListeners();
+      removeErrorEventListeners(); // Теперь функция объявлена выше — ошибки нет
     });
   }
 
