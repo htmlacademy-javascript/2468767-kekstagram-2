@@ -37,6 +37,11 @@ const onSuccessClickOutside = (evt) => {
   }
 };
 
+const removeErrorEventListeners = () => {
+  document.removeEventListener('keydown', onErrorKeydown);
+  document.removeEventListener('click', onErrorClickOutside);
+};
+
 const onErrorKeydown = (evt) => {
   if (isEscapeKey(evt) && isErrorShown) {
     evt.preventDefault();
@@ -51,10 +56,6 @@ const onErrorClickOutside = (evt) => {
   }
 };
 
-const removeErrorEventListeners = () => {
-  document.removeEventListener('keydown', onErrorKeydown);
-  document.removeEventListener('click', onErrorClickOutside);
-};
 // Используем обработчики и функции удаления
 const addSuccessEventListeners = () => {
   document.addEventListener('keydown', onSuccessKeydown);
