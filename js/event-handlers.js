@@ -44,12 +44,6 @@ const resetFormData = (uploadForm, hashtagsInput, descriptionInput, fileInput, p
   uploadForm.reset();
 };
 
-// Сначала объявляем функции, которые будут использоваться в обработчиках
-const removeErrorEventListeners = () => {
-  document.removeEventListener('keydown', onErrorKeydown);
-  document.removeEventListener('click', onErrorClickOutside);
-};
-
 // Обработчики событий
 const onSuccessKeydown = (evt) => {
   if (isEscapeKey(evt)) {
@@ -92,6 +86,11 @@ const removeSuccessEventListeners = () => {
 const addErrorEventListeners = () => {
   document.addEventListener('keydown', onErrorKeydown);
   document.addEventListener('click', onErrorClickOutside);
+};
+
+const removeErrorEventListeners = () => {
+  document.removeEventListener('keydown', onErrorKeydown);
+  document.removeEventListener('click', onErrorClickOutside);
 };
 
 // Функции показа сообщений
