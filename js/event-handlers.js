@@ -4,8 +4,15 @@ import { sendFormData } from './api.js';
 let currentSuccessElement = null;
 let currentErrorElement = null;
 
-// Флаг: открыта ли сейчас ошибка (ключевое дополнение)
+
+// Флаг: открыта ли сейчас ошибка
 let isErrorShown = false;
+
+// Хранилище для ссылок на обработчики
+let errorEventHandlers = {
+  keydown: null,
+  click: null
+};
 
 // Простые функции удаления (не вызывают обработчики)
 const removeSuccessMessage = () => {
@@ -37,11 +44,6 @@ const onSuccessClickOutside = (evt) => {
   }
 };
 
-const removeErrorEventListeners = () => {
-  document.removeEventListener('keydown', onErrorKeydown);
-  document.removeEventListener('click', onErrorClickOutside);
-};
-
 const onErrorKeydown = (evt) => {
   if (isEscapeKey(evt) && isErrorShown) {
     evt.preventDefault();
@@ -56,6 +58,29 @@ const onErrorClickOutside = (evt) => {
   }
 };
 
+// Функции управления обработчиками — теперь без циклических зависимостей
+const addErrorEventListeners = () => {
+  // Сохраняем ссылки на обработчики в хранилище
+  errorEventHandlers.keydown = onErrorKeydown;
+  errorEventHandlers.click = onErrorClickOutside;
+
+  document.addEventListener('keydown', errorEventHandlers.keydown);
+  document.addEventListener('click', errorEventHandlers.click);
+};
+
+const removeErrorEventListeners = () => {
+  // Удаляем только если обработчики установлены
+  if (errorEventHandlers.keydown) {
+    document.removeEventListener('keydown', errorEventHandlers.keydown);
+    errorEventHandlers.keydown = null; // Очищаем ссылку
+  }
+
+  if (errorEventHandlers.click) {
+    document.removeEventListener('click', errorEventHandlers.click);
+    errorEventHandlers.click = null; // Очищаем ссылку
+  }
+};
+
 // Используем обработчики и функции удаления
 const addSuccessEventListeners = () => {
   document.addEventListener('keydown', onSuccessKeydown);
@@ -65,11 +90,6 @@ const addSuccessEventListeners = () => {
 const removeSuccessEventListeners = () => {
   document.removeEventListener('keydown', onSuccessKeydown);
   document.removeEventListener('click', onSuccessClickOutside);
-};
-
-const addErrorEventListeners = () => {
-  document.addEventListener('keydown', onErrorKeydown);
-  document.addEventListener('click', onErrorClickOutside);
 };
 
 // Функции показа сообщений
@@ -129,7 +149,7 @@ const showErrorMessage = (errorMessage) => {
   }
 
   isErrorShown = true; // Устанавливаем флаг — ошибка открыта
-  addErrorEventListeners();
+  addErrorEventListeners(); // Добавляем обработчики с сохранением ссылок
 };
 
 // Настраивает все обработчики событий для формы загрузки
