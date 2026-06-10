@@ -22,16 +22,6 @@ const removeSuccessMessage = () => {
   }
 };
 
-const removeErrorMessage = () => {
-  if (currentErrorElement && currentErrorElement.parentNode) {
-    currentErrorElement.parentNode.removeChild(currentErrorElement);
-    currentErrorElement = null;
-    isErrorShown = false;
-    removeErrorEventListeners(); // Удаляем обработчики один раз
-  }
-};
-
-
 // Сначала объявляем removeErrorEventListeners — до функций, которые его вызывают
 const removeErrorEventListeners = () => {
   // Удаляем только если обработчики установлены
@@ -43,6 +33,15 @@ const removeErrorEventListeners = () => {
   if (errorEventHandlers.click) {
     document.removeEventListener('click', errorEventHandlers.click);
     errorEventHandlers.click = null; // Очищаем ссылку
+  }
+};
+
+const removeErrorMessage = () => {
+  if (currentErrorElement && currentErrorElement.parentNode) {
+    currentErrorElement.parentNode.removeChild(currentErrorElement);
+    currentErrorElement = null;
+    isErrorShown = false;
+    removeErrorEventListeners(); // Удаляем обработчики один раз
   }
 };
 
