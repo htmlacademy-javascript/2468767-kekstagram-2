@@ -1,11 +1,18 @@
 import { isEscapeKey } from './util.js';
 import { sendFormData } from './api.js';
+import { resetImageFormState } from './image-processor.js';
 
 let currentSuccessElement = null;
 let currentErrorElement = null;
 
-// Флаг: открыта ли сейчас ошибка (ключевое дополнение)
+// Флаг: открыта ли сейчас ошибка
 let isErrorShown = false;
+
+// Хранилище для ссылок на обработчики — используем const, так как сам объект не переза присваивается
+const errorEventHandlers = {
+  keydown: null,
+  click: null
+};
 
 // Простые функции удаления (не вызывают обработчики)
 const removeSuccessMessage = () => {
@@ -15,15 +22,30 @@ const removeSuccessMessage = () => {
   }
 };
 
+// Сначала объявляем removeErrorEventListeners — до функций, которые его вызывают
+const removeErrorEventListeners = () => {
+  // Удаляем только если обработчики установлены
+  if (errorEventHandlers.keydown) {
+    document.removeEventListener('keydown', errorEventHandlers.keydown);
+    errorEventHandlers.keydown = null; // Очищаем ссылку
+  }
+
+  if (errorEventHandlers.click) {
+    document.removeEventListener('click', errorEventHandlers.click);
+    errorEventHandlers.click = null; // Очищаем ссылку
+  }
+};
+
 const removeErrorMessage = () => {
   if (currentErrorElement && currentErrorElement.parentNode) {
     currentErrorElement.parentNode.removeChild(currentErrorElement);
     currentErrorElement = null;
-    isErrorShown = false; // Сбрасываем флаг при закрытии ошибки
+    isErrorShown = false;
+    removeErrorEventListeners(); // Удаляем обработчики один раз
   }
 };
 
-// Обработчики событий
+// Обработчики событий — теперь могут безопасно вызывать removeErrorEventListeners
 const onSuccessKeydown = (evt) => {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
@@ -41,7 +63,7 @@ const onErrorKeydown = (evt) => {
   if (isEscapeKey(evt) && isErrorShown) {
     evt.preventDefault();
     removeErrorMessage();
-    removeErrorEventListeners();
+    removeErrorEventListeners(); // Теперь функция уже объявлена — ошибки нет
   }
 };
 
@@ -51,7 +73,16 @@ const onErrorClickOutside = (evt) => {
   }
 };
 
-// Используем обработчики и функции удаления
+// Функции управления обработчиками
+const addErrorEventListeners = () => {
+  // Сохраняем ссылки на обработчики в хранилище
+  errorEventHandlers.keydown = onErrorKeydown;
+  errorEventHandlers.click = onErrorClickOutside;
+
+  document.addEventListener('keydown', errorEventHandlers.keydown);
+  document.addEventListener('click', errorEventHandlers.click);
+};
+
 const addSuccessEventListeners = () => {
   document.addEventListener('keydown', onSuccessKeydown);
   document.addEventListener('click', onSuccessClickOutside);
@@ -60,16 +91,6 @@ const addSuccessEventListeners = () => {
 const removeSuccessEventListeners = () => {
   document.removeEventListener('keydown', onSuccessKeydown);
   document.removeEventListener('click', onSuccessClickOutside);
-};
-
-const addErrorEventListeners = () => {
-  document.addEventListener('keydown', onErrorKeydown);
-  document.addEventListener('click', onErrorClickOutside);
-};
-
-const removeErrorEventListeners = () => {
-  document.removeEventListener('keydown', onErrorKeydown);
-  document.removeEventListener('click', onErrorClickOutside);
 };
 
 // Функции показа сообщений
@@ -124,12 +145,11 @@ const showErrorMessage = (errorMessage) => {
   if (errorButton) {
     errorButton.addEventListener('click', () => {
       removeErrorMessage();
-      removeErrorEventListeners();
     });
   }
 
   isErrorShown = true; // Устанавливаем флаг — ошибка открыта
-  addErrorEventListeners();
+  addErrorEventListeners(); // Добавляем обработчики с сохранением ссылок
 };
 
 // Настраивает все обработчики событий для формы загрузки
@@ -193,6 +213,7 @@ const setupEventHandlers = (
       if (!isInInput) {
         evt.preventDefault();
         hideEditForm(overlay, body, fileInput, previewImage, hashtagsInput, descriptionInput, pristine);
+        resetImageFormState();
       }
     }
   });
@@ -202,6 +223,7 @@ const setupEventHandlers = (
     overlay.addEventListener('click', (evt) => {
       if (!evt.target.closest('.img-upload__wrapper')) {
         hideEditForm(overlay, body, fileInput, previewImage, hashtagsInput, descriptionInput, pristine);
+        resetImageFormState();
       }
     });
   }
