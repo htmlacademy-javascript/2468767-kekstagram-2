@@ -1,5 +1,6 @@
 import { isEscapeKey } from './util.js';
 import { sendFormData } from './api.js';
+import { resetImageFormState } from './image-processor.js';
 
 let currentSuccessElement = null;
 let currentErrorElement = null;
@@ -25,9 +26,11 @@ const removeErrorMessage = () => {
   if (currentErrorElement && currentErrorElement.parentNode) {
     currentErrorElement.parentNode.removeChild(currentErrorElement);
     currentErrorElement = null;
-    isErrorShown = false; // Сбрасываем флаг при закрытии ошибки
+    isErrorShown = false;
+    removeErrorEventListeners(); // Удаляем обработчики один раз
   }
 };
+
 
 // Сначала объявляем removeErrorEventListeners — до функций, которые его вызывают
 const removeErrorEventListeners = () => {
@@ -143,7 +146,6 @@ const showErrorMessage = (errorMessage) => {
   if (errorButton) {
     errorButton.addEventListener('click', () => {
       removeErrorMessage();
-      removeErrorEventListeners(); // Теперь функция объявлена выше — ошибки нет
     });
   }
 
@@ -212,6 +214,7 @@ const setupEventHandlers = (
       if (!isInInput) {
         evt.preventDefault();
         hideEditForm(overlay, body, fileInput, previewImage, hashtagsInput, descriptionInput, pristine);
+        resetImageFormState();
       }
     }
   });
@@ -221,6 +224,7 @@ const setupEventHandlers = (
     overlay.addEventListener('click', (evt) => {
       if (!evt.target.closest('.img-upload__wrapper')) {
         hideEditForm(overlay, body, fileInput, previewImage, hashtagsInput, descriptionInput, pristine);
+        resetImageFormState();
       }
     });
   }

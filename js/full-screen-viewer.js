@@ -11,6 +11,7 @@ import {
   getCaptionElement,
   getImageElement
 } from './dom.js';
+import {resetImageFormState} from './image-processor.js'
 
 const COMMENTS_PER_PAGE = 5;
 let currentCommentsShown = 0;
